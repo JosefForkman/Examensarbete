@@ -13,3 +13,12 @@ export const load = (async () => {
 	});
 	return { client_secret: paymentIntent.client_secret };
 }) satisfies PageServerLoad;
+
+export const actions = {
+	default: async ({ request }) => {
+		const r = request.formData;
+
+		console.log(await r);
+		
+	}
+};

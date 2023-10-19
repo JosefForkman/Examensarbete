@@ -1,3 +1,7 @@
+<script>
+	import "../style.css"
+</script>
+
 <header>
 	<nav>
 		<ul>
