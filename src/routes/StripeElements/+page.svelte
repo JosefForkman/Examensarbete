@@ -2,13 +2,20 @@
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import { PUBLIC_STRIPE_KEY } from '$env/static/public';
+	import { loadStripe, type Appearance, type Stripe, type StripeElements } from '@stripe/stripe-js';
+	import { fail } from '@sveltejs/kit';
 
 	export let data: PageData;
+	const { client_secret } = data;
 
-	let element;
+	let elements: StripeElements | undefined;
+	let stripe: Stripe | null;
+	let errorMessage: string | undefined;
 
-	onMount(() => {
-		const appearance = {
+	onMount(async () => {
+		/* todo: move "loadStripe" to a place where it is run on every page lode   */
+		stripe = await loadStripe(PUBLIC_STRIPE_KEY, { apiVersion: '2023-08-16' });
+		const appearance: Appearance = {
 			theme: 'stripe',
 			variables: {
 				colorPrimary: '#0570de',
@@ -18,11 +25,8 @@
 				fontFamily: 'Roboto, sans-serif',
 				spacingUnit: '4px',
 				borderRadius: '4px',
-				// spacingGridRow: "48px",
-				// spacingGridColumn: "48px",
-				gridRowSpacing: '16px',
-				colorLogo: 'light'
-				// See all possible variables below
+				colorLogo: 'light',
+				spacingGridRow: '16px'
 			},
 			rules: {
 				'.Input': {
@@ -43,23 +47,19 @@
 				}
 			}
 		};
+		if (!stripe || !client_secret) {
+			throw fail(500);
+		}
 
-		const style = {
-			base: {
-				color: '#32325d'
-			}
-		};
-		const stripe = Stripe(PUBLIC_STRIPE_KEY);
-		const elements = stripe.elements({
-			clientSecret: data.client_secret,
+		elements = stripe.elements({
+			clientSecret: client_secret,
 			appearance
 		});
-
 		const linkAuthElement = elements.create('linkAuthentication');
 		const addressElement = elements.create('address', { mode: 'shipping' });
 		const card = elements.create('payment', {
 			layout: {
-				type: 'tabs',
+				type: 'accordion',
 				defaultCollapsed: false
 			}
 		});
@@ -68,12 +68,38 @@
 		addressElement.mount('#address-element');
 		card.mount('#card-element');
 	});
+
+	/* Handel submitt */
+	const handelSubmit = async (
+		e: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }
+	) => {
+		e.preventDefault();
+
+		if (!stripe || !elements) {
+			errorMessage = 'Stripe or element is not loaded';
+			return;
+		}
+
+		const { error } = await stripe.confirmPayment({
+			elements,
+			confirmParams: {
+				// Make sure to change this to your payment completion page
+				return_url: new URL('/checkout/success', window.location.origin).toString()
+			}
+		});
+
+		if (error.type === 'card_error' || error.type === 'validation_error') {
+			errorMessage = error.message;
+		} else {
+			errorMessage = 'An unexpected error occurred.';
+		}
+	};
 </script>
 
 <main>
 	<h1>Stripe Elements</h1>
 
-	<form id="payment-form" method="post">
+	<form id="payment-form" on:submit={handelSubmit}>
 		<div id="address-element">
 			<!-- Elements will create input elements here -->
 		</div>
@@ -84,8 +110,9 @@
 			<!-- Elements will create input elements here -->
 		</div>
 		<!-- We'll put the error messages in this element -->
-		<div id="card-errors" role="alert" />
-
+		{#if errorMessage}
+			<div id="card-errors" role="alert">{errorMessage}</div>
+		{/if}
 		<button id="submit">Submit Payment</button>
 	</form>
 </main>

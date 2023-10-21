@@ -15,10 +15,5 @@ export const load = (async () => {
 }) satisfies PageServerLoad;
 
 export const actions = {
-	default: async ({ request }) => {
-		const r = request.formData;
-
-		console.log(await r);
-		
-	}
+	default: async ({}) => {}
 };
