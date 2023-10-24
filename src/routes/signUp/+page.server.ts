@@ -16,15 +16,23 @@ const loginSchema = z
 export const load = async () => {
 	const loginForm = await superValidate(loginSchema);
 
-	return {loginForm};
+	return { loginForm };
 };
 
 export const actions = {
 	// @ts-ignore
 	default: async ({ request, url, locals: { supabase } }) => {
-		const formData = await request.formData();
-		const email = formData.get('email') as string;
-		const password = formData.get('password') as string;
+		// const formData = await request.formData();
+		// const email = formData.get('email') as string;
+		// const password = formData.get('password') as string;
+		const form = await superValidate(request, loginSchema);
+
+		if (!form.valid) {
+			// Again, return { form } and things will just work.
+			return fail(400, { form });
+		}
+
+		const {data: {email, password}} = form; 
 
 		const { error } = await supabase.auth.signUp({
 			email,
@@ -35,12 +43,13 @@ export const actions = {
 		});
 
 		if (error) {
-			return fail(500, { message: 'Server error. Try again later.', success: false, email });
+			return fail(500, { message: 'Server error. Try again later.', success: false, email, form });
 		}
 
 		return {
 			message: 'Please check your email for a magic link to log into the website.',
-			success: true
+			success: true,
+			form
 		};
 	}
 };
