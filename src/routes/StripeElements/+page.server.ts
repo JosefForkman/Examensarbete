@@ -1,8 +1,8 @@
 import { stripe } from '$lib/server/stripe';
 import type { PageServerLoad } from './$types';
 
-export const load = (async () => {
-	const paymentIntent = await stripe.paymentIntents.create({
+export const load = (async ({ locals: { stripeClient } }) => {
+	const { client_secret } = await stripe.paymentIntents.create({
 		amount: 1099,
 		currency: 'sek',
 		payment_method_types: ['card'],
@@ -11,9 +11,6 @@ export const load = (async () => {
 			integration_check: 'accept_a_payment'
 		}
 	});
-	return { client_secret: paymentIntent.client_secret };
-}) satisfies PageServerLoad;
 
-export const actions = {
-	default: async ({}) => {}
-};
+	return { client_secret };
+}) satisfies PageServerLoad;

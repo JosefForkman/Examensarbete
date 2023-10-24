@@ -1,65 +1,61 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
-	import { PUBLIC_STRIPE_KEY } from '$env/static/public';
-	import { loadStripe, type Appearance, type Stripe, type StripeElements } from '@stripe/stripe-js';
 	import { fail } from '@sveltejs/kit';
+	import type { StripeElements } from '@stripe/stripe-js';
 
 	export let data: PageData;
-	const { client_secret } = data;
+	const { stripeClient, client_secret } = data;
 
-	let elements: StripeElements | undefined;
-	let stripe: Stripe | null;
 	let errorMessage: string | undefined;
+	let elements: StripeElements;
 
 	onMount(async () => {
-		/* todo: move "loadStripe" to a place where it is run on every page lode   */
-		stripe = await loadStripe(PUBLIC_STRIPE_KEY, { apiVersion: '2023-08-16' });
-		const appearance: Appearance = {
-			theme: 'stripe',
-			variables: {
-				colorPrimary: '#0570de',
-				colorBackground: '#ffffff',
-				colorText: '#30313d',
-				colorDanger: '#df1b41',
-				fontFamily: 'Roboto, sans-serif',
-				spacingUnit: '4px',
-				borderRadius: '4px',
-				colorLogo: 'light',
-				spacingGridRow: '16px'
-			},
-			rules: {
-				'.Input': {
-					border: '3px solid hsl(0, 0%, 55%)',
-					boxShadow: 'none'
-				},
-				'.Input:hover': {
-					boxShadow: 'none',
-					border: '3px solid hsl(0, 0%, 35%)'
-				},
-				'.Input:focus': {
-					boxShadow: 'none',
-					border: '3px solid hsl(0, 0%, 35%)'
-				},
-				'.Input--invalid': {
-					boxShadow: 'none',
-					border: '3px solid yellow'
-				}
-			}
-		};
-		if (!stripe || !client_secret) {
-			throw fail(500);
+		if (!stripeClient || !client_secret) {
+			return;
 		}
 
-		elements = stripe.elements({
+		elements = stripeClient.elements({
 			clientSecret: client_secret,
-			appearance
+			appearance: {
+				theme: 'stripe',
+				variables: {
+					colorPrimary: 'hsl(274, 70%, 48%)',
+					colorBackground: '#F8F2FD',
+					colorText: '#30313d',
+					colorDanger: '#df1b41',
+					fontFamily: 'Roboto, sans-serif',
+					spacingUnit: '4px',
+					borderRadius: '4px',
+					colorLogo: 'light',
+					spacingGridRow: '16px'
+				},
+				rules: {
+					'.Input': {
+						border: '3px solid hsl(274, 70%, 48%)',
+						boxShadow: 'none'
+					},
+					'.Input:hover': {
+						boxShadow: 'none',
+						border: '3px solid hsl(274, 70%, 48%)'
+					},
+					'.Input:focus': {
+						boxShadow: 'none',
+						border: '3px solid hsla(274, 70%, 48%, .50)'
+					},
+					'.Input--invalid': {
+						boxShadow: 'none',
+						border: '3px solid hsla(274, 70%, 48%)'
+					}
+				}
+			}
 		});
+
 		const linkAuthElement = elements.create('linkAuthentication');
 		const addressElement = elements.create('address', { mode: 'shipping' });
 		const card = elements.create('payment', {
 			layout: {
-				type: 'accordion',
+				type: 'tabs',
 				defaultCollapsed: false
 			}
 		});
@@ -75,12 +71,12 @@
 	) => {
 		e.preventDefault();
 
-		if (!stripe || !elements) {
+		if (!stripeClient || !elements) {
 			errorMessage = 'Stripe or element is not loaded';
 			return;
 		}
 
-		const { error } = await stripe.confirmPayment({
+		const { error } = await stripeClient.confirmPayment({
 			elements,
 			confirmParams: {
 				// Make sure to change this to your payment completion page
@@ -109,6 +105,8 @@
 		<div id="link-auth-element">
 			<!-- Elements will create input elements here -->
 		</div>
+
+		<input type="hidden" name="Element" value={JSON.stringify(elements)} />
 		<!-- We'll put the error messages in this element -->
 		{#if errorMessage}
 			<div id="card-errors" role="alert">{errorMessage}</div>

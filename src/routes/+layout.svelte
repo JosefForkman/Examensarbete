@@ -1,21 +1,17 @@
 <script>
-	import "../style.css"
+	import "../style.css";
 </script>
 
 <header>
 	<nav>
 		<ul>
 			<li><a href="/">Home</a></li>
+			<li><a href="/Product">Product</a></li>
 			<li><a href="/checkout">Checkout</a></li>
 			<li><a href="/StripeElements">Stripe Elements</a></li>
 		</ul>
 	</nav>
 </header>
-
-<svelte:head>
-	<title>Checkout</title>
-	<script src="https://js.stripe.com/v3/"></script>
-</svelte:head>
 
 <slot />
 
