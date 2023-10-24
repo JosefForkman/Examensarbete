@@ -4,7 +4,7 @@
 	import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
 
 	export let data: PageData;
-	const { form, errors, constraints, enhance } = superForm(data.loginForm);
+	const { form, errors, constraints, enhance } = superForm(data.signUpForm);
 </script>
 
 <SuperDebug data={$form} />
