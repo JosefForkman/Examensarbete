@@ -23,7 +23,7 @@
 		</button>
 	</div>
 
-	<nav class={navIsOpen ? 'active' : ''}>
+	<!-- <nav class={navIsOpen ? 'active' : ''}>
 		<ul>
 			<li><a href="/"><Fa icon={faHouse} />Hem</a></li>
 			<li><a href="/Godis"><Fa icon={faCandyCane} />Godis</a></li>
@@ -34,7 +34,7 @@
 				>
 			</li>
 		</ul>
-	</nav>
+	</nav> -->
 </header>
 
 <slot />
