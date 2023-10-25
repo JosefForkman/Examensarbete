@@ -14,7 +14,7 @@
 	<a class="loga" href="/">ChokladFrossa</a>
 
 	<div class="middelItem">
-		<Fa icon={faCartShopping} />
+		<Fa size="2x" icon={faCartShopping} />
 
 		<button class="hamburger" on:click={() => (navIsOpen = !navIsOpen)}>
 			<span />
@@ -25,12 +25,26 @@
 
 	<nav class={navIsOpen ? 'active' : ''}>
 		<ul>
-			<li><a href="/"><Fa icon={faHouse} />Hem</a></li>
-			<li><a href="/Godis"><Fa icon={faCandyCane} />Godis</a></li>
 			<li>
-				<a href="/OmOss"
-					><div class="svgContiner" />
-					 Om oss</a
+				<a href="/"
+					><div class="svgContiner">
+						<Fa icon={faHouse} />
+					</div>
+					Hem</a
+				>
+			</li>
+			<li>
+				<a href="/Godis"
+					><div class="svgContiner">
+						<Fa icon={faCandyCane} />
+					</div>
+					Godis</a
+				>
+			</li>
+			<li>
+				<a href="/OmOss">
+					<div class="svgContiner" />
+					Om oss</a
 				>
 			</li>
 		</ul>
@@ -41,10 +55,12 @@
 
 <style>
 	header {
+		--_navPosision: calc(125px + 1rem);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		gap: 2rem;
+		padding-block: 2rem;
 	}
 
 	.loga {
@@ -56,7 +72,7 @@
 	.hamburger {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 0.7rem;
 		background-color: transparent;
 		width: 50px;
 
@@ -79,16 +95,19 @@
 
 	nav {
 		position: absolute;
-		top: 50%;
-		left: 100%;
-		transform: translate(0%, -50%);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: var(--Background);
+		width: 100vw;
+		height: calc(100vh - var(--_navPosision));
+		transform: translate(100%, var(--_navPosision));
 
 		transition: 0.6s;
 	}
 
 	nav.active {
-		left: 50%;
-		transform: translate(-50%, -50%);
+		transform: translate(0%, var(--_navPosision));
 	}
 
 	ul {
@@ -98,7 +117,10 @@
 
 		list-style: none;
 	}
-
+	li:focus, li:hover {
+		outline: transparent;
+		border-bottom: 2px solid var(--Secundaty);
+	}
 	ul a {
 		display: flex;
 		gap: 1em;
@@ -109,6 +131,6 @@
 
 	.svgContiner {
 		height: 2.25rem;
-		aspect-ratio: 1 / 1;
+		aspect-ratio: 1;
 	}
 </style>
