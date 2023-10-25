@@ -1,6 +1,17 @@
-<h1>Home</h1>
-<p>
-	Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nihil reprehenderit dicta labore
-	necessitatibus totam itaque maxime, consequatur deserunt ea laboriosam, assumenda, possimus
-	accusamus numquam ab architecto ipsam maiores quo fuga?
-</p>
+<script lang="ts">
+	import type { PageData } from './$types';
+
+	export let data: PageData;
+
+	const { Products } = data;
+</script>
+
+<h1>Welcome to SvelteKit</h1>
+<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+{#if Products}
+	{#each Products as Product}
+		<p>{Product.description}</p>
+	{/each}
+{:else}
+	<p>LMAO</p>
+{/if}
