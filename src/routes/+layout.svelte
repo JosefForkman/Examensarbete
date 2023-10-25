@@ -7,6 +7,8 @@
 
 	export let data: LayoutData;
 
+	const { session } = data;
+
 	let navIsOpen = false;
 </script>
 
@@ -14,12 +16,15 @@
 	<a class="loga" href="/">ChokladFrossa</a>
 
 	<div class="middelItem">
-		<Fa size="2x" icon={faCartShopping} />
+		<Fa size="2x" color="var(--Primary)" icon={faCartShopping} />
 
-		<button 
-			class="hamburger" 
-			on:click={() => (navIsOpen = !navIsOpen)}>
-			<!-- <p class="sr-only">Menu toggle button </p> -->
+		<button
+			class="hamburger"
+			aria-controls="mainNav"
+			aria-expanded={navIsOpen}
+			on:click={() => (navIsOpen = !navIsOpen)}
+		>
+			<p class="sr-only">Menu toggle button</p>
 			<span aria-hidden="true" />
 			<span aria-hidden="true" />
 			<span aria-hidden="true" />
@@ -50,6 +55,27 @@
 					Om oss</a
 				>
 			</li>
+
+			{#if session}
+				<li>
+					<form method="post">
+						<button class="btn">Logga ut</button>
+					</form>
+				</li>
+			{:else}
+				<li>
+					<a href="/login">
+						<div class="svgContiner" />
+						Logga in</a
+					>
+				</li>
+				<li>
+					<a href="/signUp">
+						<div class="svgContiner" />
+						Registrera</a
+					>
+				</li>
+			{/if}
 		</ul>
 	</nav>
 </header>
@@ -97,9 +123,9 @@
 	}
 
 	nav {
+		display: none;
 		position: absolute;
 		top: 0px;
-		display: flex;
 		align-items: center;
 		justify-content: center;
 		background-color: var(--Background);
@@ -112,6 +138,7 @@
 	}
 
 	nav.active {
+		display: flex;
 		/* transform: translateX(0%); */
 		transform: translate(0%, var(--_navPosision));
 	}
@@ -123,7 +150,8 @@
 
 		list-style: none;
 	}
-	li:focus, li:hover {
+	li:focus,
+	li:hover {
 		outline: transparent;
 		border-bottom: 2px solid var(--Secundaty);
 	}
