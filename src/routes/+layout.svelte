@@ -16,14 +16,17 @@
 	<div class="middelItem">
 		<Fa size="2x" icon={faCartShopping} />
 
-		<button class="hamburger" on:click={() => (navIsOpen = !navIsOpen)}>
-			<span />
-			<span />
-			<span />
+		<button 
+			class="hamburger" 
+			on:click={() => (navIsOpen = !navIsOpen)}>
+			<!-- <p class="sr-only">Menu toggle button </p> -->
+			<span aria-hidden="true" />
+			<span aria-hidden="true" />
+			<span aria-hidden="true" />
 		</button>
 	</div>
 
-	<nav class={navIsOpen ? 'active' : ''}>
+	<nav id="mainNav" class={navIsOpen ? 'active' : ''}>
 		<ul>
 			<li>
 				<a href="/"
@@ -55,7 +58,7 @@
 
 <style>
 	header {
-		--_navPosision: calc(125px + 1rem);
+		--_navPosision: calc(125px + 2rem);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -95,18 +98,21 @@
 
 	nav {
 		position: absolute;
+		top: 0px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		background-color: var(--Background);
 		width: 100vw;
 		height: calc(100vh - var(--_navPosision));
+		/* transform: translateX(100%); */
 		transform: translate(100%, var(--_navPosision));
 
 		transition: 0.6s;
 	}
 
 	nav.active {
+		/* transform: translateX(0%); */
 		transform: translate(0%, var(--_navPosision));
 	}
 
