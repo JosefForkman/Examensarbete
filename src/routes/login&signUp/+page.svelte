@@ -4,15 +4,15 @@
 
 <main>
 	<div class="linkContainer">
-		<a class="linkBtn">Login</a>
-		<a class="linkBtn">Sign Up</a>
+		<a class="linkBtn" href='/login'>Login</a>
+		<a class="linkBtn" href='/signUp'>Sign Up</a>
 	</div>
 </main>
 
 <style>
 	main {
 		width: 100%;
-		height: 100vh;
+		height: 60vh;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -27,7 +27,10 @@
 	}
 	.linkBtn {
 		padding: 17px 60px;
-		border-radius: 100%;
+		border-radius: 25px;
+		font-size: 20px;
 		cursor: pointer;
+		background-color: var(--Primary);
+		color: white;
 	}
 </style>
