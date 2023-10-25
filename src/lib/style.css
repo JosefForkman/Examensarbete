@@ -5,11 +5,11 @@
 }
 
 :root {
-    --Background: #F8F2FD;
-    --Primary: #380F57;
-    --Secundaty: #DAB8F4;
-    --Accent: #8625D0;
-    --Error: #D02525;
+	--Background: #f8f2fd;
+	--Primary: #380f57;
+	--Secundaty: #dab8f4;
+	--Accent: #8625d0;
+	--Error: #d02525;
 }
 
 /* Poppins & Robota */
@@ -17,6 +17,7 @@
 
 body {
 	font-family: 'Roboto', sans-serif;
+	background-color: var(--Background);
 }
 
 h1,
