@@ -15,22 +15,17 @@
 <header>
 	<a class="loga" href="/">ChokladFrossa</a>
 
-	<div class="middelItem">
-		<Fa size="2x" color="var(--Primary)" icon={faCartShopping} />
-
-		<button
-			class="hamburger"
-			aria-controls="mainNav"
-			aria-expanded={navIsOpen}
-			on:click={() => (navIsOpen = !navIsOpen)}
-		>
-			<p class="sr-only">Menu toggle button</p>
-			<span aria-hidden="true" />
-			<span aria-hidden="true" />
-			<span aria-hidden="true" />
-		</button>
-	</div>
-
+	<button
+		class="hamburger"
+		aria-controls="mainNav"
+		aria-expanded={navIsOpen}
+		on:click={() => (navIsOpen = !navIsOpen)}
+	>
+		<p class="sr-only">Meny</p>
+		<span aria-hidden="true" />
+		<span aria-hidden="true" />
+		<span aria-hidden="true" />
+	</button>
 	<nav id="mainNav" class={navIsOpen ? 'active' : ''}>
 		<ul>
 			<li>
@@ -38,22 +33,22 @@
 					><div class="svgContiner">
 						<Fa icon={faHouse} />
 					</div>
-					Hem</a
-				>
+					Hem
+				</a>
 			</li>
 			<li>
 				<a href="/Godis"
 					><div class="svgContiner">
 						<Fa icon={faCandyCane} />
 					</div>
-					Godis</a
-				>
+					Godis
+				</a>
 			</li>
 			<li>
 				<a href="/OmOss">
 					<div class="svgContiner" />
-					Om oss</a
-				>
+					Om oss
+				</a>
 			</li>
 
 			{#if session}
@@ -66,53 +61,66 @@
 				<li>
 					<a href="/login">
 						<div class="svgContiner" />
-						Logga in</a
-					>
+						Logga in
+					</a>
 				</li>
 				<li>
 					<a href="/signUp">
 						<div class="svgContiner" />
-						Registrera</a
-					>
+						Registrera
+					</a>
 				</li>
 			{/if}
 		</ul>
 	</nav>
+
+	<Fa class="CartShopping" size="2x" color="var(--Primary)" icon={faCartShopping} />
 </header>
 
 <slot />
 
 <style>
 	header {
-		--_navPosision: calc(125px + 2rem);
-		display: flex;
-		flex-direction: column;
+		--_height: 110px;
+		/* display: flex;*/
+		display: grid;
 		align-items: center;
-		gap: 2rem;
-		padding-block: 2rem;
+		justify-items: center;
+		grid-template-columns: auto 1fr auto;
+		padding: 1.5rem 3rem;
+		width: 100%;
+		height: var(--_height);
+
+		box-sizing: border-box;
 	}
 
 	.loga {
 		font-size: 3rem;
 		font-weight: 700;
-		color: var(--Primary);
+		color: var(--Accent);
+	}
+	nav ul {
+		display: flex;
+		align-items: center;
+		gap: 2rem;
 	}
 
+	nav ul li {
+		list-style: none;
+	}
+
+	nav ul li a {
+		font-size: 2.25rem;
+		color: var(--Primary);
+	}
 	.hamburger {
-		display: flex;
+		display: none;
 		flex-direction: column;
 		gap: 0.7rem;
 		background-color: transparent;
 		width: 50px;
 
 		border: none;
-	}
-	.middelItem {
-		display: flex;
-		gap: 2.5rem;
-	}
-	.middelItem svg {
-		font-size: 2rem;
 	}
 	.hamburger span {
 		background-color: var(--Primary);
@@ -122,49 +130,50 @@
 		border-radius: 0.5rem;
 	}
 
-	nav {
-		display: none;
-		position: absolute;
-		top: 0px;
-		align-items: center;
-		justify-content: center;
-		background-color: var(--Background);
-		width: 100vw;
-		height: calc(100vh - var(--_navPosision));
-		/* transform: translateX(100%); */
-		transform: translate(100%, var(--_navPosision));
-
-		transition: 0.6s;
-	}
-
-	nav.active {
-		display: flex;
-		/* transform: translateX(0%); */
-		transform: translate(0%, var(--_navPosision));
-	}
-
-	ul {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-
-		list-style: none;
-	}
-	li:focus,
-	li:hover {
-		outline: transparent;
-		border-bottom: 2px solid var(--Secundaty);
-	}
-	ul a {
-		display: flex;
-		gap: 1em;
-		font-size: 2.25rem;
-		color: var(--Primary);
-		width: max-content;
-	}
-
 	.svgContiner {
+		display: none;
 		height: 2.25rem;
 		aspect-ratio: 1;
+	}
+
+	@media (width <= 1100px) {
+		header {
+			justify-items: end;
+			gap: 2rem;
+		}
+		nav {
+			position: fixed;
+			left: 0px;
+			top: var(--_height);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-color: var(--Background);
+			height: calc(100vh - var(--_height));
+			width: 100%;
+
+			transform: translateX(100%);
+			transition: 0.6s;
+		}
+
+		nav.active {
+			transform: translateX(0%);
+		}
+
+		nav ul {
+			flex-direction: column;
+		}
+
+		.hamburger {
+			display: flex;
+		}
+
+		nav ul li a {
+			display: flex;
+			gap: 1em;
+		}
+		.svgContiner {
+			display: block;
+		}
 	}
 </style>
