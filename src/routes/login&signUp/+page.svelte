@@ -4,8 +4,8 @@
 
 <main>
 	<div class="linkContainer">
-		<a class="linkBtn" href='/login'>Login</a>
-		<a class="linkBtn" href='/signUp'>Sign Up</a>
+		<a class="btn" href='/login'>Login</a>
+		<a class="btn" href='/signUp'>Sign Up</a>
 	</div>
 </main>
 

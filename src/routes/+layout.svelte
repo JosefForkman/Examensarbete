@@ -7,69 +7,134 @@
 
 	export let data: LayoutData;
 
+	const { session, supabase } = data;
+
 	let navIsOpen = false;
+
+	const SignUt = async () => {
+		await supabase.auth.signOut();
+	};
 </script>
+
+<!-- The link is a shortcut to be able to skip the header  -->
+<a href="#shortcut" class="sr-only">Hoppa över navigering</a>
 
 <header>
 	<a class="loga" href="/">ChokladFrossa</a>
 
-	<div class="middelItem">
-		<a href="/cart">
-			<Fa icon={faCartShopping} />
-		</a>
-
-		<button class="hamburger" on:click={() => (navIsOpen = !navIsOpen)}>
-			<span />
-			<span />
-			<span />
-		</button>
-	</div>
-
-	<!-- <nav class={navIsOpen ? 'active' : ''}>
+	<button
+		class="hamburger"
+		aria-controls="mainNav"
+		aria-expanded={navIsOpen}
+		on:click={() => (navIsOpen = !navIsOpen)}
+	>
+		<p class="sr-only">Meny</p>
+		<span aria-hidden="true" />
+		<span aria-hidden="true" />
+		<span aria-hidden="true" />
+	</button>
+	<nav id="mainNav" class={navIsOpen ? 'active' : ''}>
 		<ul>
-			<li><a href="/"><Fa icon={faHouse} />Hem</a></li>
-			<li><a href="/Godis"><Fa icon={faCandyCane} />Godis</a></li>
 			<li>
-				<a href="/OmOss"
-					><div class="svgContiner" />
-					 Om oss</a
-				>
+				<a href="/">
+					<div class="svgContiner">
+						<Fa icon={faHouse} />
+					</div>
+					Hem
+				</a>
 			</li>
+			<li>
+				<a href="/Godis"
+					><div class="svgContiner">
+						<Fa icon={faCandyCane} />
+					</div>
+					Godis
+				</a>
+			</li>
+			<li>
+				<a href="/OmOss">
+					<div class="svgContiner" />
+					Om oss
+				</a>
+			</li>
+
+			{#if session}
+				<li>
+					<form action="/signOut" method="post">
+						<button class="btn">Logga ut</button>
+					</form>
+				</li>
+			{:else}
+				<li>
+					<a href="/login">
+						<div class="svgContiner" />
+						Logga in
+					</a>
+				</li>
+				<li>
+					<a href="/signUp">
+						<div class="svgContiner" />
+						Registrera
+					</a>
+				</li>
+			{/if}
 		</ul>
-	</nav> -->
+	</nav>
+	<a href="/cart">
+		<Fa class="CartShopping" size="2x" color="var(--Primary)" icon={faCartShopping} />
+	</a>
 </header>
 
-<slot />
+<div id="shortcut">
+	<slot />
+</div>
 
 <style>
 	header {
-		display: flex;
-		flex-direction: column;
+		--_height: 110px;
+		/* display: flex;*/
+		display: grid;
 		align-items: center;
-		gap: 2rem;
+		justify-items: center;
+		grid-template-columns: auto 1fr auto;
+		padding: 1.5rem 3rem;
+		width: 100%;
+		height: var(--_height);
+
+		box-sizing: border-box;
 	}
 
 	.loga {
 		font-size: 3rem;
 		font-weight: 700;
-		color: var(--Primary);
+		color: var(--Accent);
+	}
+	nav ul {
+		display: flex;
+		gap: 2rem;
 	}
 
+	nav ul li {
+		list-style: none;
+	}
+
+	nav ul li a:focus-visible {
+		outline: transparent;
+		border-bottom: 2px solid red;
+	}
+
+	nav ul li a {
+		font-size: 2.25rem;
+		color: var(--Primary);
+	}
 	.hamburger {
-		display: flex;
+		display: none;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 0.7rem;
 		background-color: transparent;
 		width: 50px;
 
 		border: none;
-	}
-	.middelItem {
-		display: flex;
-		gap: 2.5rem;
-	}
-	.middelItem svg {
-		font-size: 2rem;
 	}
 	.hamburger span {
 		background-color: var(--Primary);
@@ -79,39 +144,63 @@
 		border-radius: 0.5rem;
 	}
 
-	nav {
-		position: absolute;
-		top: 50%;
-		left: 100%;
-		transform: translate(0%, -50%);
-
-		transition: 0.6s;
-	}
-
-	nav.active {
-		left: 50%;
-		transform: translate(-50%, -50%);
-	}
-
-	ul {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-
-		list-style: none;
-	}
-
-	ul a {
-		display: flex;
-		gap: 1em;
-		font-size: 2.25rem;
-		color: var(--Primary);
-		width: max-content;
-	}
-
 	.svgContiner {
+		display: none;
 		height: 2.25rem;
-		aspect-ratio: 1 / 1;
+		aspect-ratio: 1;
+	}
+
+	@media (width <= 1300px) {
+		header {
+			justify-items: end;
+			gap: 2rem;
+		}
+		nav {
+			position: fixed;
+			left: 0px;
+			top: var(--_height);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-color: var(--Background);
+			height: calc(100vh - var(--_height));
+			width: 100%;
+
+			transform: translateX(100%);
+			transition: 0.6s;
+		}
+
+		nav.active {
+			transform: translateX(0%);
+		}
+
+		nav ul {
+			flex-direction: column;
+		}
+
+		.hamburger {
+			display: flex;
+		}
+
+		nav ul li a {
+			display: flex;
+			gap: 1em;
+		}
+		.svgContiner {
+			display: block;
+		}
+	}
+
+	@media (width <= 600px) {
+		header {
+			--_height: 171px;
+			grid-template-columns: 1fr 1fr;
+			justify-items: center;
+		}
+
+		.loga {
+			grid-column: span 2;
+		}
 	}
 
 	a {
