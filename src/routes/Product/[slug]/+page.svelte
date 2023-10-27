@@ -1,21 +1,56 @@
 <script lang="ts">
+	import { z } from 'zod';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+
+	const itemSchema = z.strictObject({
+		id: z.number(),
+		name: z.string(),
+		price: z.number(),
+		img_url: z.string().nullable(),
+		description: z.string().nullish(),
+		stripe_price_id: z.coerce.number()
+	});
+	const itemArraySchema = z.array(itemSchema);
+	let parsedProduct = itemArraySchema.parse(data.Product);
+	let product = parsedProduct[0];
+
+	const extendedItemSchema = itemSchema.extend({ quantity: z.number() });
+	const extendedItemArraySchema = z.array(extendedItemSchema);
+	type CartItems = z.infer<typeof extendedItemArraySchema>;
+
+	let newItem = {
+		id: product.id,
+		name: product.name,
+		price: product.price,
+		img_url: product.img_url,
+		stripe_price_id: product.stripe_price_id,
+		quantity: 1
+	};
+
+	function addItemToCart() {
+		let cartItems: CartItems = JSON.parse(localStorage.getItem('cart') as string);
+		if (!cartItems) {
+			console.log('no items');
+			cartItems = [];
+		}
+		cartItems.push(newItem);
+		localStorage.setItem('cart', JSON.stringify(cartItems));
+		console.log(localStorage.getItem('cart'));
+	}
 </script>
 
 <main>
-	{#if data.Product}
-		<div class="content">
-			<img src={data.Product[0].img_url} alt="" />
-			<div class="contentHeader">
-				<h1>{data.Product[0].name}</h1>
-				<h2>{data.Product[0].price} Kr</h2>
-			</div>
-			<button>Add to Cart</button> <!-- this does nothing right now. its going to add the product to the cart -->
-			<p>{data.Product[0].description}</p>
+	<div class="content">
+		<img src={product.img_url} alt="" />
+		<div class="contentHeader">
+			<h1>{product.name}</h1>
+			<h2>{product.price} Kr</h2>
 		</div>
-	{/if}
+		<button on:click={() => addItemToCart()}>Add to Cart</button>
+		<p>{product.description}</p>
+	</div>
 </main>
 
 <style>

@@ -1,26 +1,58 @@
 <script lang="ts">
-	// import type { PageData } from './$types';
+	//@ts-ignore
+	import type { PageData } from './$types';
+	import { onMount } from 'svelte';
+	import { z } from 'zod';
+	export let data: PageData;
 
-	// export let data: PageData;
+	const itemSchema = z.strictObject({
+		id: z.number(),
+		name: z.string(),
+		price: z.number(),
+		img_url: z.string().nullable(),
+		description: z.string().nullish(),
+		stripe_price_id: z.coerce.number(),
+		quantity: z.number()
+	});
+	const itemArraySchema = z.array(itemSchema);
+	type itemArray = z.infer<typeof itemArraySchema>;
+	let loadedCart: itemArray;
+	onMount(() => {
+		const cartData = localStorage.getItem('cart');
+		if (cartData) {
+			loadedCart = itemArraySchema.parse(JSON.parse(cartData));
+		}
+	});
 </script>
 
 <main>
 	<h1>Cart</h1>
 	<div class="cartContainer">
-		<ul>
-			<li>
-				<div class="wrapper">
-					<img src="" alt="" />
-					<div class="textContainer">
-						<p class="bold">name</p>
-						<p>price</p>
-					</div>
-				</div>
-				<div class="buttonContainer">
-					<input type="number" name="quantity" min="0" max="100" step="1" value="1" /><button />
-				</div>
-			</li>
-		</ul>
+		{#if loadedCart}
+			<ul>
+				{#each loadedCart as cartItem}
+					<li>
+						<div class="wrapper">
+							<img src={cartItem.img_url} alt="" />
+							<div class="textContainer">
+								<p class="bold">{cartItem.name}</p>
+								<p>{cartItem.price}</p>
+							</div>
+						</div>
+						<div class="buttonContainer">
+							<input
+								type="number"
+								name="quantity"
+								min="0"
+								max="100"
+								step="1"
+								value={cartItem.quantity}
+							/><button />
+						</div>
+					</li>
+				{/each}
+			</ul>
+		{/if}
 	</div>
 </main>
 
