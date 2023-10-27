@@ -34,6 +34,7 @@
 		<span aria-hidden="true" />
 	</button>
 	<nav id="mainNav" class={navIsOpen ? 'active' : ''}>
+
 		<ul>
 			<li>
 				<a href="/">

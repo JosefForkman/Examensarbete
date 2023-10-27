@@ -8,8 +8,12 @@ const loginSchema = z.object({
 	password: z.string().min(8)
 });
 
-export const load = async () => {
+export const load = async ({ locals: { getSession } }) => {
 	const loginForm = await superValidate(loginSchema);
+	const Session = await getSession();
+	if (Session) {
+		throw redirect(303, '/protected-routes/dashboard');
+	}
 
 	return { loginForm };
 };
@@ -53,6 +57,6 @@ export const actions = {
 				{ form }
 			);
 		}
-		throw redirect(303, '/dashboard');
+		throw redirect(303, '/protected-routes/dashboard');
 	}
 };

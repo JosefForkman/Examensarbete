@@ -1,4 +1,4 @@
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { superValidate } from 'sveltekit-superforms/server';
 
@@ -13,10 +13,14 @@ const signUpSchema = z
 		path: ['confirmPassword']
 	});
 
-export const load = async () => {
-	const signUpForm = await superValidate(signUpSchema);
+export const load = async ({ locals: { getSession } }) => {
+	const loginForm = await superValidate(signUpSchema);
+	const Session = await getSession();
+	if (Session) {
+		throw redirect(303, '/protected-routes/dashboard');
+	}
 
-	return { signUpForm };
+	return { loginForm };
 };
 
 export const actions = {

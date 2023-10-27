@@ -47,3 +47,14 @@ h3 {
     border: none;
     outline: transparent;
 }
+
+h1 {
+	font-size: 48px;
+}
+h2 {
+	font-size: 36px;
+}
+p {
+	font-size: 16px;
+	line-height: 21px;
+}
