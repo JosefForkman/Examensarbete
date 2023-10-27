@@ -25,6 +25,29 @@ h2,
 h3 {
 	font-family: 'Poppins', sans-serif;
 }
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border-width: 0;
+}
+.btn {
+    font-size: 1.25rem;
+    color: rgb(255, 255, 255);
+    background-color: var(--Primary);
+    padding: 1.0625rem 3.75rem;
+    border-radius: 6.25rem;
+
+    border: none;
+    outline: transparent;
+}
+
 h1 {
 	font-size: 48px;
 }
