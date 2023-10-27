@@ -7,9 +7,13 @@
 
 	export let data: LayoutData;
 
-	const { session } = data;
+	const { session, supabase } = data;
 
 	let navIsOpen = false;
+
+	const SignUt = async () => {
+		await supabase.auth.signOut();
+	};
 </script>
 
 <!-- The link is a shortcut to be able to skip the header  -->
@@ -56,7 +60,7 @@
 
 			{#if session}
 				<li>
-					<form method="post">
+					<form action="/signOut" method="post">
 						<button class="btn">Logga ut</button>
 					</form>
 				</li>
@@ -81,7 +85,7 @@
 </header>
 
 <div id="shortcut">
-	<slot  />
+	<slot />
 </div>
 
 <style>
