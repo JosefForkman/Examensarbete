@@ -14,7 +14,9 @@
 	<a class="loga" href="/">ChokladFrossa</a>
 
 	<div class="middelItem">
-		<Fa icon={faCartShopping} />
+		<a href="/cart">
+			<Fa icon={faCartShopping} />
+		</a>
 
 		<button class="hamburger" on:click={() => (navIsOpen = !navIsOpen)}>
 			<span />
@@ -110,5 +112,9 @@
 	.svgContiner {
 		height: 2.25rem;
 		aspect-ratio: 1 / 1;
+	}
+
+	a {
+		color: black;
 	}
 </style>
