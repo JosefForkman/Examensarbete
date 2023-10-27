@@ -12,6 +12,9 @@
 	let navIsOpen = false;
 </script>
 
+<!-- The link is a shortcut to be able to skip the header  -->
+<a href="#shortcut" class="sr-only">Hoppa över navigering</a>
+
 <header>
 	<a class="loga" href="/">ChokladFrossa</a>
 
@@ -29,8 +32,8 @@
 	<nav id="mainNav" class={navIsOpen ? 'active' : ''}>
 		<ul>
 			<li>
-				<a href="/"
-					><div class="svgContiner">
+				<a href="/">
+					<div class="svgContiner">
 						<Fa icon={faHouse} />
 					</div>
 					Hem
@@ -77,7 +80,9 @@
 	<Fa class="CartShopping" size="2x" color="var(--Primary)" icon={faCartShopping} />
 </header>
 
-<slot />
+<div id="shortcut">
+	<slot  />
+</div>
 
 <style>
 	header {
@@ -101,12 +106,16 @@
 	}
 	nav ul {
 		display: flex;
-		align-items: center;
 		gap: 2rem;
 	}
 
 	nav ul li {
 		list-style: none;
+	}
+
+	nav ul li a:focus-visible {
+		outline: transparent;
+		border-bottom: 2px solid red;
 	}
 
 	nav ul li a {
@@ -136,7 +145,7 @@
 		aspect-ratio: 1;
 	}
 
-	@media (width <= 1100px) {
+	@media (width <= 1300px) {
 		header {
 			justify-items: end;
 			gap: 2rem;
@@ -174,6 +183,18 @@
 		}
 		.svgContiner {
 			display: block;
+		}
+	}
+
+	@media (width <= 600px) {
+		header {
+			--_height: 171px;
+			grid-template-columns: 1fr 1fr;
+			justify-items: center;
+		}
+
+		.loga {
+			grid-column: span 2;
 		}
 	}
 </style>
