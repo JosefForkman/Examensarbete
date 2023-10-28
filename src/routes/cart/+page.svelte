@@ -1,36 +1,33 @@
 <script lang="ts">
-	//@ts-ignore
 	import type { PageData } from './$types';
-	import { onMount } from 'svelte';
-	import { z } from 'zod';
 	export let data: PageData;
 
-	const itemSchema = z.strictObject({
-		id: z.number(),
-		name: z.string(),
-		price: z.number(),
-		img_url: z.string().nullable(),
-		description: z.string().nullish(),
-		stripe_price_id: z.coerce.number(),
-		quantity: z.number()
-	});
-	const itemArraySchema = z.array(itemSchema);
-	type itemArray = z.infer<typeof itemArraySchema>;
-	let loadedCart: itemArray;
-	onMount(() => {
-		const cartData = localStorage.getItem('cart');
-		if (cartData) {
-			loadedCart = itemArraySchema.parse(JSON.parse(cartData));
-		}
-	});
+	import { cartStore } from '$lib/cartStore/cart';
+	import type { MouseEventHandler } from 'svelte/elements';
+	
+	const { Get, Post } = cartStore();
+	const cart = Get();
+
+	const addToCart = () => {
+		Post({
+			id: 1,
+			price: 30,
+			name: 'SvelteKit | persist state without a db | initialize state no db |localStorage hacky workaround',
+			img_url: 'https://www.youtube.com/watch?v=HjnbMCYZLEA&t=322s&ab_channel=ConsultingNinja',
+			description:
+				'Came across a need at work to hack something together a way to store some data in between refreshes without a db.  Thought this solution might come in handy to others.  Check this out and let me know you thoughts.  I hope you find this helpful!',
+			stripe_price_id: 123,
+			quantity: 1
+		});
+	};
 </script>
 
 <main>
 	<h1>Cart</h1>
 	<div class="cartContainer">
-		{#if loadedCart}
+		{#if $cart}
 			<ul>
-				{#each loadedCart as cartItem}
+				{#each $cart as cartItem}
 					<li>
 						<div class="wrapper">
 							<img src={cartItem.img_url} alt="" />
@@ -47,16 +44,18 @@
 								max="100"
 								step="1"
 								value={cartItem.quantity}
-							/><button />
+							/><button on:click={delite(cartItem.id)}>Reder</button>
 						</div>
 					</li>
 				{/each}
 			</ul>
 		{/if}
 	</div>
+
+	<button on:click={addToCart}>add</button>
 </main>
 
-<style>
+<!-- <style>
 	main {
 		width: -webkit-fill-available;
 		min-height: 99vh;
@@ -102,4 +101,4 @@
 		display: flex;
 		gap: 8px;
 	}
-</style>
+</style> -->

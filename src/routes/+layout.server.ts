@@ -1,5 +1,3 @@
-import { fail, type Actions } from '@sveltejs/kit';
-
 // src/routes/+layout.server.ts
 export const load = async ({ locals: { getSession } }) => {
 	return {
