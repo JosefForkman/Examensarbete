@@ -49,16 +49,15 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 	function Remove(cartId: number) {
 		const unSubscribe = store.subscribe((item) => {
 			if (!item) {
-				return;
+				return item;
 			}
-
+	
 			const updatedValues = item.filter((value) => value.id !== cartId);
-
-			item = updatedValues;
-			localStorage.setItem(localStorageKey, JSON.stringify(updatedValues));
-		});
-
-		unSubscribe();
+	
+			localStorage.setItem(localStorageKey, JSON.stringify(updatedValues))
+			
+			return updatedValues
+		})
 	}
 
 	return {
