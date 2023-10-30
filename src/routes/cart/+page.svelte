@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { cartStore } from '$lib/cartStore/cart';
-	import { redirect } from '@sveltejs/kit';
 
 	const { Get, Post, Remove } = cartStore();
-	const cart = Get();
+	let cart = Get();
 
 	function removeItem(cartItemId: number) {
 		Remove(cartItemId);
@@ -16,28 +15,28 @@
 		{#if $cart}
 			<ul>
 				{#each $cart as cartItem}
-					<li>
-						<div class="wrapper">
-							<img src={cartItem.img_url} alt="" />
-							<div class="textContainer">
-								<p class="bold">{cartItem.name}</p>
-								<p>{cartItem.price}</p>
+					{#key cartItem}
+						<li>
+							<div class="wrapper">
+								<img src={cartItem.img_url} alt="" />
+								<div class="textContainer">
+									<p class="bold">{cartItem.name}</p>
+									<p>{cartItem.price}</p>
+								</div>
 							</div>
-						</div>
-						<div class="buttonContainer">
-							<input
-								type="number"
-								name="quantity"
-								min="0"
-								max="100"
-								step="1"
-								value={cartItem.quantity}
-							/>
-							<form action="">
+							<div class="buttonContainer">
+								<input
+									type="number"
+									name="quantity"
+									min="0"
+									max="100"
+									step="1"
+									value={cartItem.quantity}
+								/>
 								<button type="submit" on:click={() => removeItem(cartItem.id)}>Remove</button>
-							</form>
-						</div>
-					</li>
+							</div>
+						</li>
+					{/key}
 				{/each}
 			</ul>
 		{/if}

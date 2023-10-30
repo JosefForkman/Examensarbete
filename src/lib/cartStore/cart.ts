@@ -47,17 +47,17 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 	}
 
 	function Remove(cartId: number) {
-		const unSubscribe = store.subscribe((item) => {
+		const unSubscribe = store.update((item) => {
 			if (!item) {
 				return item;
 			}
-	
+
 			const updatedValues = item.filter((value) => value.id !== cartId);
-	
-			localStorage.setItem(localStorageKey, JSON.stringify(updatedValues))
-			
-			return updatedValues
-		})
+
+			localStorage.setItem(localStorageKey, JSON.stringify(updatedValues));
+
+			return updatedValues;
+		});
 	}
 
 	return {
