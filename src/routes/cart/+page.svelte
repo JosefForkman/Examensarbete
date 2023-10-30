@@ -1,25 +1,13 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-	export let data: PageData;
-
 	import { cartStore } from '$lib/cartStore/cart';
-	import type { MouseEventHandler } from 'svelte/elements';
-	
-	const { Get, Post } = cartStore();
+	import { redirect } from '@sveltejs/kit';
+
+	const { Get, Post, Remove } = cartStore();
 	const cart = Get();
 
-	const addToCart = () => {
-		Post({
-			id: 1,
-			price: 30,
-			name: 'SvelteKit | persist state without a db | initialize state no db |localStorage hacky workaround',
-			img_url: 'https://www.youtube.com/watch?v=HjnbMCYZLEA&t=322s&ab_channel=ConsultingNinja',
-			description:
-				'Came across a need at work to hack something together a way to store some data in between refreshes without a db.  Thought this solution might come in handy to others.  Check this out and let me know you thoughts.  I hope you find this helpful!',
-			stripe_price_id: 123,
-			quantity: 1
-		});
-	};
+	function removeItem(cartItemId: number) {
+		Remove(cartItemId);
+	}
 </script>
 
 <main>
@@ -44,18 +32,19 @@
 								max="100"
 								step="1"
 								value={cartItem.quantity}
-							/><button on:click={delite(cartItem.id)}>Reder</button>
+							/>
+							<form action="">
+								<button type="submit" on:click={() => removeItem(cartItem.id)}>Remove</button>
+							</form>
 						</div>
 					</li>
 				{/each}
 			</ul>
 		{/if}
 	</div>
-
-	<button on:click={addToCart}>add</button>
 </main>
 
-<!-- <style>
+<style>
 	main {
 		width: -webkit-fill-available;
 		min-height: 99vh;
@@ -101,4 +90,4 @@
 		display: flex;
 		gap: 8px;
 	}
-</style> -->
+</style>

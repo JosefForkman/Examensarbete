@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { string, z } from 'zod';
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
@@ -8,7 +8,7 @@ export const itemZodSchema = z.strictObject({
 	price: z.number(),
 	img_url: z.string().nullable(),
 	description: z.string().nullish(),
-	stripe_price_id: z.coerce.number(),
+	stripe_price_id: string(),
 	quantity: z.number()
 });
 
@@ -46,7 +46,7 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 		});
 	}
 
-	function Delate(cartId: number) {
+	function Remove(cartId: number) {
 		const unSubscribe = store.subscribe((item) => {
 			if (!item) {
 				return;
@@ -54,8 +54,8 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 
 			const updatedValues = item.filter((value) => value.id !== cartId);
 
-			item = updatedValues
-			localStorage.setItem(localStorageKey, JSON.stringify(updatedValues))
+			item = updatedValues;
+			localStorage.setItem(localStorageKey, JSON.stringify(updatedValues));
 		});
 
 		unSubscribe();
@@ -64,6 +64,6 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 	return {
 		Get,
 		Post,
-		Delate
+		Remove
 	};
 };

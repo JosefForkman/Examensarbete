@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { z } from 'zod';
 	import type { PageData } from './$types';
+	import { cartStore } from '$lib/cartStore/cart';
+
+	const {Post} = cartStore()
 
 	export let data: PageData;
 
@@ -10,7 +13,7 @@
 		price: z.number(),
 		img_url: z.string().nullable(),
 		description: z.string().nullish(),
-		stripe_price_id: z.coerce.number()
+		stripe_price_id: z.string()
 	});
 	const itemArraySchema = z.array(itemSchema);
 	let parsedProduct = itemArraySchema.parse(data.Product);
@@ -18,27 +21,16 @@
 
 	const extendedItemSchema = itemSchema.extend({ quantity: z.number() });
 	const extendedItemArraySchema = z.array(extendedItemSchema);
-	type CartItems = z.infer<typeof extendedItemArraySchema>;
 
 	let newItem = {
 		id: product.id,
 		name: product.name,
 		price: product.price,
 		img_url: product.img_url,
+		description: product.description,
 		stripe_price_id: product.stripe_price_id,
 		quantity: 1
 	};
-
-	function addItemToCart() {
-		let cartItems: CartItems = JSON.parse(localStorage.getItem('cart') as string);
-		if (!cartItems) {
-			console.log('no items');
-			cartItems = [];
-		}
-		cartItems.push(newItem);
-		localStorage.setItem('cart', JSON.stringify(cartItems));
-		console.log(localStorage.getItem('cart'));
-	}
 </script>
 
 <main>
@@ -48,7 +40,7 @@
 			<h1>{product.name}</h1>
 			<h2>{product.price} Kr</h2>
 		</div>
-		<button on:click={() => addItemToCart()}>Add to Cart</button>
+		<button on:click={() => Post(newItem)}>Add to Cart</button>
 		<p>{product.description}</p>
 	</div>
 </main>
