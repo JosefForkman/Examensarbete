@@ -47,18 +47,17 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 	}
 
 	function Delate(cartId: number) {
-		const unSubscribe = store.subscribe((item) => {
+		store.update(item => {
 			if (!item) {
-				return;
+				return item;
 			}
-
+	
 			const updatedValues = item.filter((value) => value.id !== cartId);
-
-			item = updatedValues
+	
 			localStorage.setItem(localStorageKey, JSON.stringify(updatedValues))
-		});
-
-		unSubscribe();
+			
+			return updatedValues
+		})
 	}
 
 	return {
