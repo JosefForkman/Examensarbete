@@ -78,26 +78,26 @@ export interface Database {
         Row: {
           description: string | null
           id: number
-          img_url: string
-          name: string | null
-          price: number | null
-          stripe_price_id: string | null
+          img_url: string | null
+          name: string
+          price: number
+          stripe_price_id: string
         }
         Insert: {
           description?: string | null
           id?: number
-          img_url: string
-          name?: string | null
-          price?: number | null
-          stripe_price_id?: string | null
+          img_url?: string | null
+          name: string
+          price: number
+          stripe_price_id: string
         }
         Update: {
           description?: string | null
           id?: number
-          img_url?: string
-          name?: string | null
-          price?: number | null
-          stripe_price_id?: string | null
+          img_url?: string | null
+          name?: string
+          price?: number
+          stripe_price_id?: string
         }
         Relationships: []
       }
