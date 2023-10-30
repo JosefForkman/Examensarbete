@@ -1,41 +1,47 @@
-import { date, z } from 'zod';
+import { z } from 'zod';
 import type { RequestHandler } from './$types';
-import { error } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import { stripe } from '$lib/server/stripe';
 
-const shema = z.object({
-	name: z.string().nullable(),
-	price: z.number().nullable(),
-	description: z.string().nullable(),
-	img_url: z.string().url()
-});
+const shema = z.array(
+	z.object({
+		name: z.string(),
+		price: z.number(),
+		description: z.string().nullable(),
+		img_url: z.string().url().nullable()
+	})
+);
 
-export const POST: RequestHandler = async ({ request, locals: { supabase } }) => {
+export const POST: RequestHandler = async ({ request, locals: { supabase, getSession } }) => {
+	const session = await getSession()
+	if (!session) {
+		throw error(401)
+	}
+	
 	const req = shema.safeParse(await request.json());
 
 	if (!req.success) {
-		throw error(404, 'shema  wow');
+		throw error(400, "body matchar inte");
 	}
+	
+	
+	req.data.forEach(async (value) => {
+		const { name, price } = value;
 
-	const { name, price } = req.data;
+		const { id } = await stripe.prices.create({
+			product_data: { name },
+			currency: 'sek',
+			unit_amount: Number.parseInt((price * 100).toFixed(0)), // Parse the price to stripe
+		});
 
-	if (!name || !price) {
-		throw error(404, 'Något värde är tomt');
-	}
+		const { error: productsError } = await supabase
+			.from('Products')
+			.insert({ ...value, stripe_price_id: id });
 
-	const { id } = await stripe.prices.create({
-		product_data: { name },
-		currency: 'sek',
-		unit_amount: price * 100
+		if (productsError) {
+			throw error(400, productsError);
+		}
 	});
 
-	const { error: productsError } = await supabase
-		.from('Products')
-		.insert({ ...req.data, stripe_price_id: id });
-
-	if (productsError) {
-		throw error(400, productsError.message);
-	}
-
-	return new Response();
+	return new Response(null, {status: 201});
 };
