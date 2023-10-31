@@ -3,18 +3,38 @@
 
 	const { Get, Post, Remove, UppdateQuantity } = cartStore();
 	let cart = Get();
-	let test = 0;
+
+	let options: any = [];
+
+	for (let i = 0; i <= 100; i++) {
+		options.push(i);
+	}
+
+	function totalPrice() {
+		if (!$cart) {
+			return $cart;
+		}
+		let totalPrice = 0;
+		for (let i = 0; i < $cart.length; i++) {
+			totalPrice = totalPrice + $cart[i].price * $cart[i].quantity;
+		}
+		return totalPrice;
+	}
+	let fullPrice = totalPrice();
+
 	function removeItem(cartItemId: number) {
 		Remove(cartItemId);
 	}
 	function uppdateItem(cartItemid: number, quantity: number) {
-		const newquantity = quantity + 1;
+		const newquantity = quantity;
 		UppdateQuantity(cartItemid, newquantity);
+		fullPrice = totalPrice();
 	}
 </script>
 
 <main>
 	<h1>Cart</h1>
+	<h2>{fullPrice}</h2>
 	<div class="cartContainer">
 		{#if $cart}
 			<ul>
@@ -28,7 +48,8 @@
 							</div>
 						</div>
 						<div class="buttonContainer">
-							<input
+							<!-- might go back to this solotion for updating the quantity -->
+							<!-- <input
 								type="number"
 								name="quantity"
 								min="0"
@@ -36,7 +57,17 @@
 								step="1"
 								value={cartItem.quantity}
 								on:change={() => uppdateItem(cartItem.id, cartItem.quantity)}
-							/>
+							/> -->
+							<select
+								name=""
+								id=""
+								bind:value={cartItem.quantity}
+								on:change={() => uppdateItem(cartItem.id, cartItem.quantity)}
+							>
+								{#each options as option}
+									<option value={option}>{option}</option>
+								{/each}
+							</select>
 							<button type="submit" on:click={() => removeItem(cartItem.id)}>Remove</button>
 						</div>
 					</li>
