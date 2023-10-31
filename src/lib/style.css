@@ -40,21 +40,37 @@ h3 {
 .btn {
     font-size: 1.25rem;
     color: rgb(255, 255, 255);
+	text-align: center;
     background-color: var(--Primary);
-    padding: 1.0625rem 3.75rem;
-    border-radius: 6.25rem;
+    padding: 1em 2.5em;
+    border-radius: 2.5em;
 
     border: none;
     outline: transparent;
 }
 
 h1 {
-	font-size: 48px;
+	font-size: 3rem;
 }
 h2 {
-	font-size: 36px;
+	font-size: 2.25rem;
 }
 p {
-	font-size: 16px;
-	line-height: 21px;
+	font-size: 1rem;
+	line-height: 1.4;
+}
+
+a {
+	font-size: 1rem;
+}
+
+@media (width >= 768px) {
+	html {
+		font-size: 1.4rem;
+	}
+}
+@media (width >= 1024px) {
+	html {
+		font-size: 1.5rem;
+	}
 }
