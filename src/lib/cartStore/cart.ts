@@ -36,13 +36,22 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 		return store;
 	}
 
-	function Post(data: itemType) {
-		store.update((value) => {
-			if (!value) {
-				return value;
+	function Post(newItem: itemType) {
+		store.update((currentItems) => {
+			if (!currentItems) {
+				return currentItems;
 			}
-			localStorage.setItem(localStorageKey, JSON.stringify([...value, data]));
-			return [...value, data];
+
+			for (let i = 0; i < currentItems.length; i++) {
+				if (currentItems[i].id === newItem.id) {
+					currentItems[i].quantity = currentItems[i].quantity + 1;
+					localStorage.setItem(localStorageKey, JSON.stringify([...currentItems]));
+					return [...currentItems];
+				}
+			}
+
+			localStorage.setItem(localStorageKey, JSON.stringify([...currentItems, newItem]));
+			return [...currentItems, newItem];
 		});
 	}
 
@@ -60,9 +69,28 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 		});
 	}
 
+	function UppdateQuantity(itemId: number, quantity: number) {
+		store.update((currentItems) => {
+			if (!currentItems) {
+				return currentItems;
+			}
+			console.log('itemid:' + itemId, 'quant:' + quantity);
+			
+			for (let i = 0; i < currentItems.length; i++) {
+				if (currentItems[i].id === itemId) {
+					currentItems[i].quantity = quantity;
+					localStorage.setItem(localStorageKey, JSON.stringify([...currentItems]));
+					return [...currentItems];
+				}
+			}
+			return [...currentItems];
+		});
+	}
+
 	return {
 		Get,
 		Post,
-		Remove
+		Remove,
+		UppdateQuantity
 	};
 };

@@ -1,11 +1,15 @@
 <script lang="ts">
 	import { cartStore } from '$lib/cartStore/cart';
 
-	const { Get, Post, Remove } = cartStore();
+	const { Get, Post, Remove, UppdateQuantity } = cartStore();
 	let cart = Get();
-
+	let test = 0;
 	function removeItem(cartItemId: number) {
 		Remove(cartItemId);
+	}
+	function uppdateItem(cartItemid: number, quantity: number) {
+		const newquantity = quantity + 1;
+		UppdateQuantity(cartItemid, newquantity);
 	}
 </script>
 
@@ -15,28 +19,27 @@
 		{#if $cart}
 			<ul>
 				{#each $cart as cartItem}
-					{#key cartItem}
-						<li>
-							<div class="wrapper">
-								<img src={cartItem.img_url} alt="" />
-								<div class="textContainer">
-									<p class="bold">{cartItem.name}</p>
-									<p>{cartItem.price}</p>
-								</div>
+					<li>
+						<div class="wrapper">
+							<img src={cartItem.img_url} alt="" />
+							<div class="textContainer">
+								<p class="bold">{cartItem.name}</p>
+								<p>{cartItem.price}</p>
 							</div>
-							<div class="buttonContainer">
-								<input
-									type="number"
-									name="quantity"
-									min="0"
-									max="100"
-									step="1"
-									value={cartItem.quantity}
-								/>
-								<button type="submit" on:click={() => removeItem(cartItem.id)}>Remove</button>
-							</div>
-						</li>
-					{/key}
+						</div>
+						<div class="buttonContainer">
+							<input
+								type="number"
+								name="quantity"
+								min="0"
+								max="100"
+								step="1"
+								value={cartItem.quantity}
+								on:change={() => uppdateItem(cartItem.id, cartItem.quantity)}
+							/>
+							<button type="submit" on:click={() => removeItem(cartItem.id)}>Remove</button>
+						</div>
+					</li>
 				{/each}
 			</ul>
 		{/if}
