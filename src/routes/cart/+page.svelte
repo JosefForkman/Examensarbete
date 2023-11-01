@@ -24,6 +24,7 @@
 
 	function removeItem(cartItemId: number) {
 		Remove(cartItemId);
+		fullPrice = totalPrice();
 	}
 	function uppdateItem(cartItemid: number, quantity: number) {
 		const newquantity = quantity;
@@ -34,7 +35,7 @@
 
 <main>
 	<h1>Cart</h1>
-	<h2>{fullPrice}</h2>
+	<h2>{fullPrice} Kr</h2>
 	<div class="cartContainer">
 		{#if $cart}
 			<ul>
@@ -55,7 +56,7 @@
 								min="0"
 								max="100"
 								step="1"
-								value={cartItem.quantity}
+								bind:value={cartItem.quantity}
 								on:change={() => uppdateItem(cartItem.id, cartItem.quantity)}
 							/> -->
 							<select
