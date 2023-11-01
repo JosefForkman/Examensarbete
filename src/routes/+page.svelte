@@ -1,9 +1,11 @@
 <script>
 	import src from '$lib/assets/pexels-photo-4016579 1.png';
+	import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+	import Fa from 'svelte-fa';
 </script>
 
 <main>
-	<section>
+	<section class="herro">
 		<h1>Din Port till Godisparadiset!</h1>
 		<p>
 			ChokladFrossa är din digitala godisbutik med ett varierat sortiment av läckra och frestande
@@ -13,39 +15,71 @@
 		<a class="btn" href="/Godis">Products</a>
 		<img {src} alt="" />
 	</section>
+
+	<!-- <a class="aboutSectionLink" href="#aboutSection">
+		<p class="sr-only">Gå till om oss</p>
+		<Fa icon={faChevronDown} scale="2x" color="var(--Accent)" />
+	</a> -->
+
+	<section class="about" id="aboutSection">
+		<h2>About us</h2>
+		<p>
+			Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
+			been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
+			galley of type and scrambled it to make a type specimen book. It has survived not only five
+			centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It
+			was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
+			passages, and more recently with desktop publishing software like Aldus PageMaker including
+			versions of Lorem Ipsum.
+		</p>
+	</section>
 </main>
 
 <style>
 	main {
+		display: flex;
+		flex-direction: column;
+		gap: 10rem;
 		margin-inline: 1rem;
 	}
-	section {
+	.herro {
 		display: grid;
 		grid-template-columns: repeat(1, 1fr);
 		grid-template-rows: auto auto 1fr;
 		align-items: start;
 		gap: 1rem;
 	}
-	section h1 {
+	.herro h1 {
 		color: var(--Primary);
 	}
-	img {
+	.herro img {
 		grid-row: 1;
 		width: 100%;
 		border-radius: 0.5rem;
 	}
 
+	.aboutSectionLink {
+		text-align: center;
+	}
+
+	.about {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
 	@media (width >= 768px) {
-		section {
+		.herro {
 			grid-template-columns: 2fr auto;
 			gap: 1rem 1.5rem;
 		}
 
-		img {
+		.herro img {
 			height: 35vh;
 			object-fit: cover;
 		}
-		img, h1 {
+		img,
+		.herro h1 {
 			grid-column: span 2;
 		}
 	}
@@ -54,18 +88,18 @@
 		main {
 			margin-inline: 3rem;
 		}
-		section {
+		.herro {
 			grid-template-columns: repeat(2, 1fr);
 			justify-items: start;
 			gap: 1rem 3rem;
 		}
-		img {
+		.herro img {
 			grid-column: 2;
 			grid-row: 1 / span 3;
 			height: auto;
 		}
 
-		h1 {
+		.herro h1 {
 			grid-column: 1;
 		}
 	}

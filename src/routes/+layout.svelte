@@ -126,7 +126,7 @@
 	}
 
 	nav ul li a {
-		font-size: 1.25rem;
+		font-size: 1.5rem;
 		color: var(--Primary);
 	}
 	.hamburger {
@@ -158,7 +158,7 @@
 		}
 	}
 
-	@media (width <= 1300px) {
+	@media (width <= 1400px) {
 		header {
 			justify-items: end;
 			gap: 2rem;
