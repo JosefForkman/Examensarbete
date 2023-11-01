@@ -20,7 +20,7 @@
 <a href="#shortcut" class="sr-only">Hoppa över navigering</a>
 
 <header>
-	<a class="loga" href="/">ChokladFrossa</a>
+	<a aria-label="Logga med text 'ChokladFrossa'" class="loga" href="/">ChokladFrossa</a>
 
 	<button
 		class="hamburger"
@@ -97,15 +97,17 @@
 		align-items: center;
 		justify-items: center;
 		grid-template-columns: auto 1fr auto;
-		padding: 1.5rem 3rem;
+		padding: 1.5rem 1rem;
 		width: 100%;
 		height: var(--_height);
+		margin-bottom: 2.5rem;
+		box-shadow: 0px 4px 8px hsl(0deg 0% 0% / 10%);
 
 		box-sizing: border-box;
 	}
 
 	.loga {
-		font-size: 3rem;
+		font-size: 2rem;
 		font-weight: 700;
 		color: var(--Accent);
 	}
@@ -124,7 +126,7 @@
 	}
 
 	nav ul li a {
-		font-size: 2.25rem;
+		font-size: 1.5rem;
 		color: var(--Primary);
 	}
 	.hamburger {
@@ -150,7 +152,13 @@
 		aspect-ratio: 1;
 	}
 
-	@media (width <= 1300px) {
+	@media (width >= 1024px) {
+		header {
+			padding: 1.5rem 3rem;
+		}
+	}
+
+	@media (width <= 1400px) {
 		header {
 			justify-items: end;
 			gap: 2rem;
