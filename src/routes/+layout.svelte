@@ -179,6 +179,7 @@
 			background-color: var(--Background);
 			height: calc(100vh - var(--_height));
 			width: 100%;
+			z-index: 2;
 
 			transform: translateX(100%);
 			transition: 0.6s;
