@@ -7,7 +7,7 @@
 	const { form, errors, enhance } = superForm(data.signUpForm);
 </script>
 
-<!-- <SuperDebug data={$form} /> -->
+<SuperDebug data={$form} />
 <main>
 	<h2>Sign Up</h2>
 	<form method="post" use:enhance>

@@ -14,20 +14,23 @@ const signUpSchema = z
 	});
 
 export const load = async ({ locals: { getSession } }) => {
-	const loginForm = await superValidate(signUpSchema);
+	const signUpForm = await superValidate(signUpSchema);
 	const Session = await getSession();
 	if (Session) {
 		throw redirect(303, '/protected-routes/dashboard');
 	}
 
-	return { loginForm };
+	return { signUpForm };
 };
 
 export const actions = {
 	default: async ({ request, url, locals: { supabase } }) => {
 		const form = await superValidate(request, signUpSchema);
+		console.log('started signup');
+		
 
 		if (!form.valid) {
+			console.log('form not valid');
 			return fail(400, { form });
 		}
 
@@ -44,6 +47,7 @@ export const actions = {
 		});
 
 		if (error) {
+			console.log(error);
 			return fail(500, { message: 'Server error. Try again later.', success: false, email, form });
 		}
 
