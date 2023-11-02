@@ -67,7 +67,7 @@
 			</a>
 		</li>
 		<li>
-			<a href="/protected-routes/orders" class="menuItem">
+			<a href="/protected-routes/settings" class="menuItem">
 				<p>Hantera dina Upgifter</p>
 				<p>></p>
 			</a>
