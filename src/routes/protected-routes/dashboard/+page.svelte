@@ -66,6 +66,27 @@
 				<p>></p>
 			</a>
 		</li>
+		<li>
+			<a href="/protected-routes/orders" class="menuItem">
+				<p>Hantera dina Upgifter</p>
+				<p>></p>
+			</a>
+			<a href="/" class="menuItem">
+				<p>Vanliga Frågor</p>
+				<p>></p>
+			</a>
+			<a href="/" class="menuItem">
+				<p>Kontakta oss</p>
+				<p>></p>
+			</a>
+		</li>
+		<li>
+			<form action="/signOut" method="post">
+				<button class="btn"
+					>Logga ut <p>></p></button
+				>
+			</form>
+		</li>
 	</ul>
 </main>
 
@@ -89,7 +110,7 @@
 		list-style: none;
 		overflow: hidden;
 		background-color: white;
-		box-shadow: 0px 3px 6px grey;
+		box-shadow: 0px 3px 6px lightgray;
 		padding-top: 8px;
 	}
 	.itemHead {
@@ -127,5 +148,21 @@
 		width: 75%;
 		display: flex;
 		justify-content: space-between;
+	}
+	form {
+		width: 75%;
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 8px;
+	}
+	.btn {
+		background-color: transparent;
+		color: black;
+		padding: 0;
+		text-align: start;
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		font-size: 16px;
 	}
 </style>

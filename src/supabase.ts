@@ -32,12 +32,14 @@ export interface Database {
           {
             foreignKeyName: "Order_items_order_id_fkey"
             columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "Orders"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "Order_items_product_id_fkey"
             columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "Products"
             referencedColumns: ["id"]
           }
@@ -69,6 +71,7 @@ export interface Database {
           {
             foreignKeyName: "Orders_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
@@ -103,36 +106,34 @@ export interface Database {
       }
       Profiles: {
         Row: {
+          apartment_number: number | null
           first_name: string | null
-          house_number: string | null
-          id: number
+          house_number: number | null
+          id: string
           last_name: string | null
           street: string | null
-          stripe_id: string | null
-          user_id: string | null
         }
         Insert: {
+          apartment_number?: number | null
           first_name?: string | null
-          house_number?: string | null
-          id?: number
+          house_number?: number | null
+          id: string
           last_name?: string | null
           street?: string | null
-          stripe_id?: string | null
-          user_id?: string | null
         }
         Update: {
+          apartment_number?: number | null
           first_name?: string | null
-          house_number?: string | null
-          id?: number
+          house_number?: number | null
+          id?: string
           last_name?: string | null
           street?: string | null
-          stripe_id?: string | null
-          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "Profiles_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "Profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           }

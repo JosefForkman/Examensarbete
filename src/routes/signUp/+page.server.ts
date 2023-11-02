@@ -26,8 +26,6 @@ export const load = async ({ locals: { getSession } }) => {
 export const actions = {
 	default: async ({ request, url, locals: { supabase } }) => {
 		const form = await superValidate(request, signUpSchema);
-		console.log('started signup');
-		
 
 		if (!form.valid) {
 			console.log('form not valid');
@@ -47,7 +45,6 @@ export const actions = {
 		});
 
 		if (error) {
-			console.log(error);
 			return fail(500, { message: 'Server error. Try again later.', success: false, email, form });
 		}
 
