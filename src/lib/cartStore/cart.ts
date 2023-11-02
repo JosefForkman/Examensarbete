@@ -38,18 +38,24 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 
 	function Post(newItem: itemType) {
 		store.update((currentItems) => {
+			/* if item already exist */
 			if (!currentItems) {
-				return currentItems;
+				localStorage.setItem(localStorageKey, JSON.stringify([newItem]));
+				return [newItem];
 			}
 
-			for (let i = 0; i < currentItems.length; i++) {
-				if (currentItems[i].id === newItem.id) {
-					currentItems[i].quantity = currentItems[i].quantity + 1;
-					localStorage.setItem(localStorageKey, JSON.stringify([...currentItems]));
-					return [...currentItems];
-				}
+			const updateItem = currentItems.find((item) => item.id == newItem.id);
+			const oldItems = currentItems.filter((item) => item.id != newItem.id);
+
+			/* if item already exist */
+			if (updateItem) {
+				updateItem.quantity = updateItem.quantity + 1;
+
+				localStorage.setItem(localStorageKey, JSON.stringify([...oldItems, updateItem]));
+				return [...oldItems, updateItem];
 			}
 
+			/* if item not exist */
 			localStorage.setItem(localStorageKey, JSON.stringify([...currentItems, newItem]));
 			return [...currentItems, newItem];
 		});
@@ -75,7 +81,7 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 				return currentItems;
 			}
 			console.log('itemid:' + itemId, 'quant:' + quantity);
-			
+
 			for (let i = 0; i < currentItems.length; i++) {
 				if (currentItems[i].id === itemId) {
 					currentItems[i].quantity = quantity;
