@@ -45,31 +45,31 @@ export interface Database {
       }
       Orders: {
         Row: {
-          apartment_number: number
+          apartment_number: number | null
           house_number: number | null
           id: number
           street: string | null
-          user_id: number | null
+          user_id: string | null
         }
         Insert: {
-          apartment_number: number
+          apartment_number?: number | null
           house_number?: number | null
           id?: number
           street?: string | null
-          user_id?: number | null
+          user_id?: string | null
         }
         Update: {
-          apartment_number?: number
+          apartment_number?: number | null
           house_number?: number | null
           id?: number
           street?: string | null
-          user_id?: number | null
+          user_id?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "Orders_user_id_fkey"
             columns: ["user_id"]
-            referencedRelation: "Profiles"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           }
         ]

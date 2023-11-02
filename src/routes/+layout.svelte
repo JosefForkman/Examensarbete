@@ -60,6 +60,12 @@
 
 			{#if session}
 				<li>
+					<a href="/protected-routes/dashboard">
+						<div class="svgContiner" />
+						Mina sidor</a
+					>
+				</li>
+				<li>
 					<form action="/signOut" method="post">
 						<button class="btn">Logga ut</button>
 					</form>
