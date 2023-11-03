@@ -1,19 +1,17 @@
 <script lang="ts">
+	import '$lib/style.css';
+	
 	import type { LayoutData } from './$types';
 	import Fa from 'svelte-fa';
 	import { faCandyCane, faCartShopping, faHouse } from '@fortawesome/free-solid-svg-icons';
-
-	import '$lib/style.css';
+	import { cartStore } from '$lib/cartStore/cart';
 
 	export let data: LayoutData;
 
-	const { session, supabase } = data;
+	const { session } = data;
 
 	let navIsOpen = false;
 
-	const SignUt = async () => {
-		await supabase.auth.signOut();
-	};
 </script>
 
 <!-- The link is a shortcut to be able to skip the header  -->

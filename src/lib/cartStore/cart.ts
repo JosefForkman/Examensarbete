@@ -44,25 +44,24 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 				return [newItem];
 			}
 
-			const updateItem = currentItems.find((item) => item.id == newItem.id);
-			const oldItems = currentItems.filter((item) => item.id != newItem.id);
-
-			/* if item already exist */
-			if (updateItem) {
-				updateItem.quantity = updateItem.quantity + 1;
-
-				localStorage.setItem(localStorageKey, JSON.stringify([...oldItems, updateItem]));
-				return [...oldItems, updateItem];
-			}
+			const updateItemIndex = currentItems.findIndex((item) => item.id == newItem.id);
 
 			/* if item not exist */
-			localStorage.setItem(localStorageKey, JSON.stringify([...currentItems, newItem]));
-			return [...currentItems, newItem];
+			if (!updateItemIndex) {
+				currentItems[updateItemIndex].quantity = currentItems[updateItemIndex].quantity + 1;
+
+				localStorage.setItem(localStorageKey, JSON.stringify(currentItems));
+				return currentItems;
+			}
+
+			/* if item already exist */
+			localStorage.setItem(localStorageKey, JSON.stringify([newItem, ...currentItems]));
+			return [newItem, ...currentItems];
 		});
 	}
 
 	function Remove(cartId: number) {
-		const unSubscribe = store.update((item) => {
+		store.update((item) => {
 			if (!item) {
 				return item;
 			}
