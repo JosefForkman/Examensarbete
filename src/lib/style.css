@@ -38,6 +38,7 @@ h3 {
 	border-width: 0;
 }
 .btn {
+	display: inline-block;
     font-size: 1.25rem;
     color: rgb(255, 255, 255);
 	text-align: center;

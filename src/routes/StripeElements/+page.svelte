@@ -4,6 +4,7 @@
 	import type { StripeElements } from '@stripe/stripe-js';
 	import { fail, redirect } from '@sveltejs/kit';
 	import { cartStore } from '$lib/cartStore/cart';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 	const { stripeClient } = data;
@@ -28,11 +29,9 @@
 				)
 			});
 
-			console.log(respond);
 			console.log($cartItems);
 			if (!respond.ok) {
-				
-				errorMessage = 'Du måste ha något i varukorgen';
+				goto('/Product');
 			}
 
 			const { client_secret }: { client_secret: string | null | undefined } = await respond.json();
@@ -90,7 +89,7 @@
 			addressElement.mount('#address-element');
 			card.mount('#card-element');
 		} catch (err) {
-			console.log("wow");
+			console.log('wow');
 		}
 
 		// const { client_secret }: { client_secret: string | null } = await req.json();
