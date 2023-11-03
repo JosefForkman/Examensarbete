@@ -54,7 +54,7 @@
 					<p>{orderItem.Products.name}</p>
 				</div>
 			{/each}
-			<a class="details" href="/">Mer Info ></a>
+			<a class="details" href={'/protected-routes/orders/' + lastOrder.id}>Mer Info ></a>
 		</li>
 		<li>
 			<a href="/protected-routes/orders" class="menuItem">

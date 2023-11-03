@@ -48,22 +48,28 @@ export interface Database {
       Orders: {
         Row: {
           apartment_number: number | null
+          delivery_date: string | null
           house_number: number | null
           id: number
+          order_date: string | null
           street: string | null
           user_id: string | null
         }
         Insert: {
           apartment_number?: number | null
+          delivery_date?: string | null
           house_number?: number | null
           id?: number
+          order_date?: string | null
           street?: string | null
           user_id?: string | null
         }
         Update: {
           apartment_number?: number | null
+          delivery_date?: string | null
           house_number?: number | null
           id?: number
+          order_date?: string | null
           street?: string | null
           user_id?: string | null
         }

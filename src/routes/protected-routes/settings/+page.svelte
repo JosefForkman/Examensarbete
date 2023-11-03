@@ -6,19 +6,6 @@
 	export let data: PageData;
 	//@ts-ignore
 	const { form } = superForm(data.form);
-
-	const profileSchema = z.object({
-		id: z.string(),
-		first_name: z.string().nullish(),
-		last_name: z.string().nullish(),
-		street: z.string().nullish(),
-		house_number: z.number().nullish(),
-		apartment_number: z.number().nullish()
-	});
-	const profileArraySchema = z.array(profileSchema);
-
-	const parsedProfile = profileArraySchema.parse(data.profiles);
-	const profile = parsedProfile[0];
 </script>
 
 <main>
@@ -43,7 +30,10 @@
 			<label for="first_name">Lägenhets Nummer</label>
 			<input type="number" name="apartment_number" bind:value={$form.apartment_number} />
 		</div>
-		<p>Alla fält kan lämnas tomma om du inte vill spara din information.</p>
+		<p>
+			Alla fält kan lämnas tomma om du inte vill spara din information. <br /><br /> Ifall du vill ta
+			bort någon information töm då endast det fältet och Uppdatera så tar vi bort den.
+		</p>
 		<div class="btnContainer"><button type="submit">Uppdatera mina uppgifter</button></div>
 	</form>
 </main>
