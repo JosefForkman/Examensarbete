@@ -4,11 +4,12 @@
 	const { Get, Post, Remove, UppdateQuantity } = cartStore();
 	let cart = Get();
 
-	let options: any = [];
+	let options: number[] = [];
 
-	for (let i = 0; i <= 100; i++) {
+	for (let i = 1; i <= 100; i++) {
 		options.push(i);
 	}
+
 
 	function totalPrice() {
 		if (!$cart) {
@@ -38,7 +39,7 @@
 </script>
 
 <main>
-	<h1>Cart</h1>
+	<h1>Kundvagn</h1>
 	<h2>{fullPrice}</h2>
 	<div>
 		{#if $cart}

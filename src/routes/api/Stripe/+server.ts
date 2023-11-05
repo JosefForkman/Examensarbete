@@ -1,34 +1,38 @@
 import { stripe } from '$lib/server/stripe';
-import { error, fail, json, redirect } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { z } from 'zod';
 
+const respond = z.array(
+	z.object({
+		productsId: z
+			.string()
+			.min(30, 'Produkt id för kort')
+			.regex(new RegExp('price_[A-Za-z0-9]{8,}$'), 'Formateringen av produkt id är fel'),
+		quantity: z.number().min(1)
+	})
+);
 export const POST: RequestHandler = async ({ request }) => {
-	const data: { productsId: string; quantity: number }[] = await request.json();
+	const body = respond.safeParse(request);
 
-	let price = 0;
-
-	const { data: stripeProducts } = await stripe.prices.list();
-    
-    for (let i = 0; i < data.length; i++) {
-        const element = data[i];
-        
-        const stripeProduct = stripeProducts.find(
-            (stripeProduct) => stripeProduct.id === element.productsId
-        );
-		
-		if (!stripeProduct || !stripeProduct.unit_amount) {
-			throw error(404, "Produkten finns inte")
-		}
-
-        price += stripeProduct.unit_amount * element.quantity
-    }
-	
-	if (price == 0) {
-		throw error(400, "Priset får inte vara 0")
+	if (!body.success) {
+		return json(
+			{
+				message: 'Saknar värden i body',
+				error: body.error.issues.map((val) => {
+					return {
+						message: val.message,
+						object: val.path[1],
+						objectIndex: val.path[0]
+					};
+				})
+			},
+			{ status: 400 }
+		);
 	}
 
 	const { client_secret } = await stripe.paymentIntents.create({
-		amount: price,
+		amount: await calculateOrderAmount(body.data),
 		currency: 'sek',
 		// payment_method_types: ['card'],
 		automatic_payment_methods: { enabled: true },
@@ -37,7 +41,27 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 	});
 
-	// return new Response()
-
 	return json({ client_secret }, { status: 201 });
 };
+
+async function calculateOrderAmount(body: z.infer<typeof respond>) {
+	let price = 0;
+
+	const { data: stripeProducts } = await stripe.prices.list();
+
+	/* Get total cost */
+	for (let i = 0; i < body.length; i++) {
+		const element = body[i];
+
+		const stripeProduct = stripeProducts.find(
+			(stripeProduct) => stripeProduct.id === element.productsId
+		);
+
+		if (!stripeProduct || !stripeProduct.unit_amount) {
+			throw json({ message: 'Produkten finns inte' }, { status: 404 });
+		}
+
+		price += stripeProduct.unit_amount * element.quantity;
+	}
+	return price;
+}
