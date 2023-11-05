@@ -47,23 +47,19 @@ export const POST: RequestHandler = async ({ request }) => {
 };
 
 async function calculateOrderAmount(body: z.infer<typeof respond>) {
-	let price = 0;
-
 	const { data: stripeProducts } = await stripe.prices.list();
 
-	/* Get total cost */	
-	body.forEach(element => {
+	/* Get total cost */
+	return body.reduce((previousValue, currentValue) => {
 		const stripeProduct = stripeProducts.find(
-			(stripeProduct) => stripeProduct.id === element.productsId
+			(stripeProduct) => stripeProduct.id === currentValue.productsId
 		);
-	
+		
+		/* Check for errors */
 		if (!stripeProduct || !stripeProduct.unit_amount) {
 			throw json({ message: 'Produkten finns inte' }, { status: 404 });
 		}
-	
-		price += stripeProduct.unit_amount * element.quantity;
-		
-	})
 
-	return price;
+		return previousValue += stripeProduct.unit_amount * currentValue.quantity
+	}, 0);
 }
