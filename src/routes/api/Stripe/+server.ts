@@ -13,8 +13,9 @@ const respond = z.array(
 	})
 );
 export const POST: RequestHandler = async ({ request }) => {
-	const body = respond.safeParse(request);
+	const body = respond.safeParse(await request.json());
 
+	/* Check for errors */
 	if (!body.success) {
 		return json(
 			{
@@ -31,6 +32,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		);
 	}
 
+	/* Make paymentIntents to frontend */
 	const { client_secret } = await stripe.paymentIntents.create({
 		amount: await calculateOrderAmount(body.data),
 		currency: 'sek',
@@ -49,19 +51,19 @@ async function calculateOrderAmount(body: z.infer<typeof respond>) {
 
 	const { data: stripeProducts } = await stripe.prices.list();
 
-	/* Get total cost */
-	for (let i = 0; i < body.length; i++) {
-		const element = body[i];
-
+	/* Get total cost */	
+	body.forEach(element => {
 		const stripeProduct = stripeProducts.find(
 			(stripeProduct) => stripeProduct.id === element.productsId
 		);
-
+	
 		if (!stripeProduct || !stripeProduct.unit_amount) {
 			throw json({ message: 'Produkten finns inte' }, { status: 404 });
 		}
-
+	
 		price += stripeProduct.unit_amount * element.quantity;
-	}
+		
+	})
+
 	return price;
 }
