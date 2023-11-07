@@ -36,6 +36,9 @@
 		</p>
 		<div class="btnContainer"><button type="submit">Uppdatera mina uppgifter</button></div>
 	</form>
+	<form action="/deleteAcc" method="post">
+		<button class="removeAcc">Ta bort ditt konto</button>
+	</form>
 </main>
 
 <style>
@@ -90,5 +93,9 @@
 		width: 80%;
 		color: gray;
 		font-size: 13px;
+	}
+	.removeAcc {
+		background-color: red;
+		width: 80%;
 	}
 </style>

@@ -1,13 +1,23 @@
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private';
 import { createSupabaseServerClient } from '@supabase/auth-helpers-sveltekit';
 import { type Handle, redirect, error } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	event.locals.supabase = createSupabaseServerClient({
-		supabaseUrl: PUBLIC_SUPABASE_URL,
-		supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
-		event
-	});
+	if (event.url.pathname.startsWith('/deleteAcc')) {
+		// this is real scary stuff. the Service role lets us ignore ALL OF SUPABASE'S RLS
+		event.locals.supabase = createSupabaseServerClient({
+			supabaseUrl: PUBLIC_SUPABASE_URL,
+			supabaseKey: SUPABASE_SERVICE_ROLE_KEY,
+			event
+		});
+	} else {
+		event.locals.supabase = createSupabaseServerClient({
+			supabaseUrl: PUBLIC_SUPABASE_URL,
+			supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
+			event
+		});
+	}
 
 	event.locals.getSession = async () => {
 		const {

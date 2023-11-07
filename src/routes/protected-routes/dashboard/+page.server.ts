@@ -11,7 +11,13 @@ export const load: PageServerLoad = async ({ locals: { supabase, getSession } })
 	let userId = session?.user.id as string;
 
 	const { data: profiles } = await supabase.from('Profiles').select('*');
-	if (profiles?.length !== 0) {
+	console.log(profiles);
+
+	if (!profiles) {
+		return;
+	}
+
+	if (profiles?.length < 1) {
 		const { error } = await supabase.from('Profiles').insert({ id: userId });
 	}
 

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { z } from 'zod';
 	import type { PageData } from './$types';
+	import { error } from '@sveltejs/kit';
+	import type { Order } from '@stripe/stripe-js';
 
 	export let data: PageData;
 
@@ -26,36 +28,48 @@
 			})
 		)
 	});
-	const orderArraySchema = z.array(orderSchema);
+	const orderArraySchema = z.array(orderSchema).nullish();
 	let parsedOrders = orderArraySchema.parse(data.orders);
+	console.log(parsedOrders);
+	if (!parsedOrders) {
+		// throw error(500, 'Något gick fel');
+		parsedOrders = [];
+	}
+	let lastOrder: z.infer<typeof orderSchema>;
 
 	let fullPrice: any = [];
-
-	for (let i = 0; i < parsedOrders.length; i++) {
-		let orderPrice = 0;
-		parsedOrders[i].Order_items.forEach((orderItem) => {
-			orderPrice += orderItem.Products.price * orderItem.quantity;
-		});
-		fullPrice.push(orderPrice);
+	if (parsedOrders.length >= 1) {
+		console.log('aaaaaa');
+		for (let i = 0; i < parsedOrders.length; i++) {
+			let orderPrice = 0;
+			parsedOrders[i].Order_items.forEach((orderItem) => {
+				orderPrice += orderItem.Products.price * orderItem.quantity;
+			});
+			fullPrice.push(orderPrice);
+		}
+		let lastIndex = parsedOrders.length - 1;
+		let lastOrder = parsedOrders[lastIndex];
 	}
-	let lastIndex = parsedOrders.length - 1;
-	let lastOrder = parsedOrders[lastIndex];
 </script>
 
 <main>
 	<ul>
-		<li>
-			<div class="itemHead">
-				<h2>Senaste Beställning</h2>
-			</div>
-			{#each lastOrder.Order_items as orderItem}
-				<div class="productContainer">
-					<img src={orderItem.Products.img_url} alt="" />
-					<p>{orderItem.Products.name}</p>
-				</div>
-			{/each}
-			<a class="details" href={'/protected-routes/orders/' + lastOrder.id}>Mer Info ></a>
-		</li>
+		{#if parsedOrders !== undefined && parsedOrders !== null}
+			{#if parsedOrders.length >= 1}
+				<li>
+					<div class="itemHead">
+						<h2>Senaste Beställning</h2>
+					</div>
+					{#each lastOrder.Order_items as orderItem}
+						<div class="productContainer">
+							<img src={orderItem.Products.img_url} alt="" />
+							<p>{orderItem.Products.name}</p>
+						</div>
+					{/each}
+					<a class="details" href={'/protected-routes/orders/' + lastOrder.id}>Mer Info ></a>
+				</li>
+			{/if}
+		{/if}
 		<li>
 			<a href="/protected-routes/orders" class="menuItem">
 				<p>Alla Beställningar</p>
