@@ -32,12 +32,14 @@ export interface Database {
           {
             foreignKeyName: "Order_items_order_id_fkey"
             columns: ["order_id"]
+            isOneToOne: false
             referencedRelation: "Orders"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "Order_items_product_id_fkey"
             columns: ["product_id"]
+            isOneToOne: false
             referencedRelation: "Products"
             referencedColumns: ["id"]
           }
@@ -45,34 +47,27 @@ export interface Database {
       }
       Orders: {
         Row: {
-          apartment_number: number
-          house_number: number | null
+          delivery_date: string | null
           id: number
-          street: string | null
-          user_id: number | null
+          order_date: string | null
+          stripe_customer_id: string
+          stripe_payment_intent_id: string
         }
         Insert: {
-          apartment_number: number
-          house_number?: number | null
+          delivery_date?: string | null
           id?: number
-          street?: string | null
-          user_id?: number | null
+          order_date?: string | null
+          stripe_customer_id: string
+          stripe_payment_intent_id: string
         }
         Update: {
-          apartment_number?: number
-          house_number?: number | null
+          delivery_date?: string | null
           id?: number
-          street?: string | null
-          user_id?: number | null
+          order_date?: string | null
+          stripe_customer_id?: string
+          stripe_payment_intent_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "Orders_user_id_fkey"
-            columns: ["user_id"]
-            referencedRelation: "Profiles"
-            referencedColumns: ["id"]
-          }
-        ]
+        Relationships: []
       }
       Products: {
         Row: {
@@ -103,36 +98,22 @@ export interface Database {
       }
       Profiles: {
         Row: {
-          first_name: string | null
-          house_number: string | null
-          id: number
-          last_name: string | null
-          street: string | null
-          stripe_id: string | null
-          user_id: string | null
+          id: string
+          stripe_customer_id: string
         }
         Insert: {
-          first_name?: string | null
-          house_number?: string | null
-          id?: number
-          last_name?: string | null
-          street?: string | null
-          stripe_id?: string | null
-          user_id?: string | null
+          id: string
+          stripe_customer_id: string
         }
         Update: {
-          first_name?: string | null
-          house_number?: string | null
-          id?: number
-          last_name?: string | null
-          street?: string | null
-          stripe_id?: string | null
-          user_id?: string | null
+          id?: string
+          stripe_customer_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "Profiles_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "Profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           }

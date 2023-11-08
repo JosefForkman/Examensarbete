@@ -1,68 +1,97 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
-	import { fail } from '@sveltejs/kit';
 	import type { StripeElements } from '@stripe/stripe-js';
+	import { fail, redirect } from '@sveltejs/kit';
+	import { cartStore } from '$lib/cartStore/cart';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
-	const { stripeClient, client_secret } = data;
+	const { stripeClient } = data;
 
 	let errorMessage: string | undefined;
 	let elements: StripeElements;
 
+	const { Get, Remove } = cartStore();
+	const cartItems = Get();
+	// Remove(53)
 	onMount(async () => {
-		if (!stripeClient || !client_secret) {
-			return;
-		}
+		try {
+			const respond = await fetch('/api/Stripe', {
+				method: 'Post',
+				body: JSON.stringify(
+					$cartItems?.map((val) => {
+						return {
+							productsId: val.stripe_price_id,
+							quantity: val.quantity
+						};
+					})
+				)
+			});
 
-		elements = stripeClient.elements({
-			clientSecret: client_secret,
-			appearance: {
-				theme: 'stripe',
-				variables: {
-					colorPrimary: 'hsl(274, 70%, 48%)',
-					colorBackground: '#F8F2FD',
-					colorText: '#30313d',
-					colorDanger: '#df1b41',
-					fontFamily: 'Roboto, sans-serif',
-					spacingUnit: '4px',
-					borderRadius: '4px',
-					colorLogo: 'light',
-					spacingGridRow: '16px'
-				},
-				rules: {
-					'.Input': {
-						border: '3px solid hsl(274, 70%, 48%)',
-						boxShadow: 'none'
+			if (!respond.ok) {
+				goto('/Product');
+			}
+
+			const { client_secret }: { client_secret: string | null | undefined } = await respond.json();
+
+			if (!stripeClient || !client_secret) {
+				return;
+			}
+
+			elements = stripeClient.elements({
+				clientSecret: client_secret,
+				appearance: {
+					theme: 'stripe',
+					variables: {
+						colorPrimary: 'hsl(274, 70%, 48%)',
+						colorBackground: '#F8F2FD',
+						colorText: '#30313d',
+						colorDanger: '#df1b41',
+						fontFamily: 'Roboto, sans-serif',
+						spacingUnit: '4px',
+						borderRadius: '4px',
+						colorLogo: 'light',
+						spacingGridRow: '16px'
 					},
-					'.Input:hover': {
-						boxShadow: 'none',
-						border: '3px solid hsl(274, 70%, 48%)'
-					},
-					'.Input:focus': {
-						boxShadow: 'none',
-						border: '3px solid hsla(274, 70%, 48%, .50)'
-					},
-					'.Input--invalid': {
-						boxShadow: 'none',
-						border: '3px solid hsla(274, 70%, 48%)'
+					rules: {
+						'.Input': {
+							border: '3px solid hsl(274, 70%, 48%)',
+							boxShadow: 'none'
+						},
+						'.Input:hover': {
+							boxShadow: 'none',
+							border: '3px solid hsl(274, 70%, 48%)'
+						},
+						'.Input:focus': {
+							boxShadow: 'none',
+							border: '3px solid hsla(274, 70%, 48%, .50)'
+						},
+						'.Input--invalid': {
+							boxShadow: 'none',
+							border: '3px solid hsla(274, 70%, 48%)'
+						}
 					}
 				}
-			}
-		});
+			});
 
-		const linkAuthElement = elements.create('linkAuthentication');
-		const addressElement = elements.create('address', { mode: 'shipping' });
-		const card = elements.create('payment', {
-			layout: {
-				type: 'tabs',
-				defaultCollapsed: false
-			}
-		});
+			const linkAuthElement = elements.create('linkAuthentication');
+			const addressElement = elements.create('address', { mode: 'shipping' });
+			const card = elements.create('payment', {
+				layout: {
+					type: 'tabs',
+					defaultCollapsed: false
+				}
+			});
 
-		linkAuthElement.mount('#link-auth-element');
-		addressElement.mount('#address-element');
-		card.mount('#card-element');
+			linkAuthElement.mount('#link-auth-element');
+			addressElement.mount('#address-element');
+			card.mount('#card-element');
+		} catch (err) {
+			console.log(err);
+		}
+
+		// const { client_secret }: { client_secret: string | null } = await req.json();
 	});
 
 	/* Handel submitt */
@@ -96,22 +125,15 @@
 	<h1>Stripe Elements</h1>
 
 	<form id="payment-form" on:submit={handelSubmit}>
-		<div id="address-element">
-			<!-- Elements will create input elements here -->
-		</div>
-		<div id="card-element">
-			<!-- Elements will create input elements here -->
-		</div>
-		<div id="link-auth-element">
-			<!-- Elements will create input elements here -->
-		</div>
+		<div id="address-element" />
+		<div id="card-element" />
+		<div id="link-auth-element" />
 
-		<input type="hidden" name="Element" value={JSON.stringify(elements)} />
 		<!-- We'll put the error messages in this element -->
 		{#if errorMessage}
 			<div id="card-errors" role="alert">{errorMessage}</div>
 		{/if}
-		<button id="submit">Submit Payment</button>
+		<button disabled={!!errorMessage} id="submit">Slutför köp</button>
 	</form>
 </main>
 

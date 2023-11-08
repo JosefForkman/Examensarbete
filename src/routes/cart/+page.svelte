@@ -4,11 +4,12 @@
 	const { Get, Post, Remove, UppdateQuantity } = cartStore();
 	let cart = Get();
 
-	let options: any = [];
+	let options: number[] = [];
 
-	for (let i = 0; i <= 100; i++) {
+	for (let i = 1; i <= 100; i++) {
 		options.push(i);
 	}
+
 
 	function totalPrice() {
 		if (!$cart) {
@@ -18,25 +19,29 @@
 		for (let i = 0; i < $cart.length; i++) {
 			totalPrice = totalPrice + $cart[i].price * $cart[i].quantity;
 		}
+
 		return totalPrice;
 	}
-	let fullPrice = totalPrice();
+
+	const priceFormat = new Intl.NumberFormat('SE', { style: 'currency', currency: 'sek' });
+
+	let fullPrice = priceFormat.format(totalPrice() ?? 0);
 
 	function removeItem(cartItemId: number) {
 		Remove(cartItemId);
-		fullPrice = totalPrice();
+		fullPrice = priceFormat.format(totalPrice() ?? 0);
 	}
 	function uppdateItem(cartItemid: number, quantity: number) {
 		const newquantity = quantity;
 		UppdateQuantity(cartItemid, newquantity);
-		fullPrice = totalPrice();
+		fullPrice = priceFormat.format(totalPrice() ?? 0);
 	}
 </script>
 
 <main>
-	<h1>Cart</h1>
-	<h2>{fullPrice} Kr</h2>
-	<div class="cartContainer">
+	<h1>Kundvagn</h1>
+	<h2>{fullPrice}</h2>
+	<div>
 		{#if $cart}
 			<ul>
 				{#each $cart as cartItem}
@@ -74,13 +79,17 @@
 					</li>
 				{/each}
 			</ul>
+			{#if $cart.length > 0}
+				<a href="/StripeElements" class="btn">Gå till betalning</a>
+			{:else}
+				<a href="/Product" class="btn">Leta efter Godis</a>
+			{/if}
 		{/if}
 	</div>
 </main>
 
 <style>
 	main {
-		width: -webkit-fill-available;
 		min-height: 99vh;
 		margin-inline: 18px;
 		display: flex;
@@ -90,8 +99,11 @@
 		width: 80px;
 		height: 80px;
 	}
+	ul {
+		margin-bottom: 2.5rem;
+	}
 	li {
-		width: -webkit-fill-available;
+		width: 100%;
 		display: flex;
 		justify-content: space-between;
 		border-bottom: solid 2px black;
