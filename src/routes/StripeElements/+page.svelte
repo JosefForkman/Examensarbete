@@ -29,7 +29,6 @@
 				)
 			});
 
-			console.log($cartItems);
 			if (!respond.ok) {
 				goto('/Product');
 			}
@@ -89,7 +88,7 @@
 			addressElement.mount('#address-element');
 			card.mount('#card-element');
 		} catch (err) {
-			console.log('wow');
+			console.log(err);
 		}
 
 		// const { client_secret }: { client_secret: string | null } = await req.json();
@@ -126,22 +125,15 @@
 	<h1>Stripe Elements</h1>
 
 	<form id="payment-form" on:submit={handelSubmit}>
-		<div id="address-element">
-			<!-- Elements will create input elements here -->
-		</div>
-		<div id="card-element">
-			<!-- Elements will create input elements here -->
-		</div>
-		<div id="link-auth-element">
-			<!-- Elements will create input elements here -->
-		</div>
+		<div id="address-element" />
+		<div id="card-element" />
+		<div id="link-auth-element" />
 
-		<input type="hidden" name="Element" value={JSON.stringify(elements)} />
 		<!-- We'll put the error messages in this element -->
 		{#if errorMessage}
 			<div id="card-errors" role="alert">{errorMessage}</div>
 		{/if}
-		<button disabled={!!errorMessage} id="submit">Submit Payment</button>
+		<button disabled={!!errorMessage} id="submit">Slutför köp</button>
 	</form>
 </main>
 
