@@ -17,6 +17,12 @@ export const load = async ({ locals: { getSession } }) => {
 
 	return { loginForm };
 };
+//@ts-ignore
+async function create_profile_on_first_login({ locals: { getSession, supabase } }) {
+	const Session = await getSession();
+	let userId = Session.user();
+	console.log(userId);
+}
 
 export const actions = {
 	default: async ({ request, locals: { supabase } }) => {
@@ -57,6 +63,7 @@ export const actions = {
 				{ form }
 			);
 		}
+		create_profile_on_first_login;
 		throw redirect(303, '/protected-routes/dashboard');
 	}
 };

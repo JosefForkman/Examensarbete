@@ -15,6 +15,7 @@ const signUpSchema = z
 	});
 
 export const load = async ({ locals: { getSession } }) => {
+	const signUpForm = await superValidate(signUpSchema);
 	const Session = await getSession();
 	if (Session) {
 		throw redirect(303, '/protected-routes/dashboard');
@@ -23,6 +24,7 @@ export const load = async ({ locals: { getSession } }) => {
 	const signUpForm = await superValidate(signUpSchema);
 
 	return { signUpForm };
+	return { signUpForm };
 };
 
 export const actions = {
@@ -30,6 +32,7 @@ export const actions = {
 		const form = await superValidate(request, signUpSchema);
 
 		if (!form.valid) {
+			console.log('form not valid');
 			return fail(400, { form });
 		}
 
