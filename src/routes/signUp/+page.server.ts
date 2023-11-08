@@ -20,10 +20,6 @@ export const load = async ({ locals: { getSession } }) => {
 	if (Session) {
 		throw redirect(303, '/protected-routes/dashboard');
 	}
-
-	const signUpForm = await superValidate(signUpSchema);
-
-	return { signUpForm };
 	return { signUpForm };
 };
 
