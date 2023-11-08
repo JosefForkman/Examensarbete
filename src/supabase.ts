@@ -47,44 +47,27 @@ export interface Database {
       }
       Orders: {
         Row: {
-          apartment_number: number | null
           delivery_date: string | null
-          house_number: number | null
           id: number
           order_date: string | null
-          street: string | null
-          stripe_payment_intent_id: string | null
-          user_id: string | null
+          stripe_customer_id: string
+          stripe_payment_intent_id: string
         }
         Insert: {
-          apartment_number?: number | null
           delivery_date?: string | null
-          house_number?: number | null
           id?: number
           order_date?: string | null
-          street?: string | null
-          stripe_payment_intent_id?: string | null
-          user_id?: string | null
+          stripe_customer_id: string
+          stripe_payment_intent_id: string
         }
         Update: {
-          apartment_number?: number | null
           delivery_date?: string | null
-          house_number?: number | null
           id?: number
           order_date?: string | null
-          street?: string | null
-          stripe_payment_intent_id?: string | null
-          user_id?: string | null
+          stripe_customer_id?: string
+          stripe_payment_intent_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "Orders_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
+        Relationships: []
       }
       Products: {
         Row: {
@@ -115,28 +98,16 @@ export interface Database {
       }
       Profiles: {
         Row: {
-          apartment_number: number | null
-          first_name: string | null
-          house_number: number | null
           id: string
-          last_name: string | null
-          street: string | null
+          stripe_customer_id: string
         }
         Insert: {
-          apartment_number?: number | null
-          first_name?: string | null
-          house_number?: number | null
           id: string
-          last_name?: string | null
-          street?: string | null
+          stripe_customer_id: string
         }
         Update: {
-          apartment_number?: number | null
-          first_name?: string | null
-          house_number?: number | null
           id?: string
-          last_name?: string | null
-          street?: string | null
+          stripe_customer_id?: string
         }
         Relationships: [
           {

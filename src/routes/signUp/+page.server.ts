@@ -1,6 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { superValidate } from 'sveltekit-superforms/server';
+import { stripe } from '$lib/server/stripe.js';
 
 const signUpSchema = z
 	.object({
@@ -14,13 +15,14 @@ const signUpSchema = z
 	});
 
 export const load = async ({ locals: { getSession } }) => {
-	const loginForm = await superValidate(signUpSchema);
 	const Session = await getSession();
 	if (Session) {
 		throw redirect(303, '/protected-routes/dashboard');
 	}
 
-	return { loginForm };
+	const signUpForm = await superValidate(signUpSchema);
+
+	return { signUpForm };
 };
 
 export const actions = {
@@ -35,7 +37,10 @@ export const actions = {
 			data: { email, password }
 		} = form;
 
-		const { error } = await supabase.auth.signUp({
+		const {
+			error: signUpError,
+			data: { user }
+		} = await supabase.auth.signUp({
 			email,
 			password,
 			options: {
@@ -43,10 +48,20 @@ export const actions = {
 			}
 		});
 
-		if (error) {
+		if (signUpError || !user) {
 			return fail(500, { message: 'Server error. Try again later.', success: false, email, form });
 		}
 
+		const { id } = await stripe.customers.create({ email });
+
+		const { error: errorProfil } = await supabase
+			.from('Profiles')
+			.insert({ stripe_customer_id: id, id: user.id });
+
+		console.log(errorProfil);
+		if (errorProfil || !user) {
+			return fail(500, { message: 'Server error. Try again later.', success: false, email, form });
+		}
 		return {
 			message: 'Please check your email for a magic link to log into the website.',
 			success: true,
