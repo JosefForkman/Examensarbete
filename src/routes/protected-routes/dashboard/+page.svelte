@@ -35,7 +35,7 @@
 		// throw error(500, 'Något gick fel');
 		parsedOrders = [];
 	}
-	let lastOrder: z.infer<typeof orderSchema>;
+	let lastOrder: any;
 
 	let fullPrice: any = [];
 	if (parsedOrders.length >= 1) {
@@ -48,7 +48,7 @@
 			fullPrice.push(orderPrice);
 		}
 		let lastIndex = parsedOrders.length - 1;
-		let lastOrder = parsedOrders[lastIndex];
+		lastOrder = parsedOrders[lastIndex];
 	}
 </script>
 

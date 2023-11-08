@@ -22,7 +22,7 @@ export const POST: RequestHandler = async ({ locals: { supabase, getSession } })
 			.delete()
 			.eq('order_id', order.id);
 		if (orderError) {
-			throw error(500, 'fucked order items');
+			throw error(500, 'fucked order items delete');
 		}
 	});
 
