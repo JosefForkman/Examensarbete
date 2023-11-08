@@ -30,7 +30,7 @@
 			});
 
 			if (!respond.ok) {
-				goto('/Product');
+				// goto('/Product');
 			}
 
 			const { client_secret }: { client_secret: string | null | undefined } = await respond.json();

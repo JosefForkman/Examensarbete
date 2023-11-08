@@ -39,30 +39,25 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, getSes
 	}
 
 	/* Make paymentIntents to frontend */
-	const {
-		client_secret,
-		shipping,
-		canceled_at,
-		transfer_data,
-		id: stripeId
-	} = await stripe.paymentIntents.create({
+	const { client_secret, customer } = await stripe.paymentIntents.create({
 		amount: await calculateOrderAmount(body.data),
 		currency: 'sek',
 		// payment_method_types: ['card'],
 		automatic_payment_methods: { enabled: true },
+		setup_future_usage: 'on_session',
 		metadata: {
 			integration_check: 'accept_a_payment'
 		}
 	});
 
+	if (!customer || typeof customer === 'string' || !client_secret) {
+		return json({ message: 'kunde inte hitta stripe kund' }, { status: 500 });
+	}
+	
 	const { error } = await supabase.from('Orders').insert({
-		apartment_number: shipping?.address?.line2 as number | null | undefined,
-		house_number: shipping?.address?.line1,
-		street: shipping?.address?.postal_code,
-		order_date: canceled_at,
-		delivery_date: transfer_data,
-		stripe_payment_intent_id: stripeId,
-		user_id: session.user.id
+		stripe_customer_id: customer.id,
+		stripe_payment_intent_id: client_secret
+
 	});
 	if (error) {
 		return json({ message: 'kunde inte skapa data' }, { status: 500 });
