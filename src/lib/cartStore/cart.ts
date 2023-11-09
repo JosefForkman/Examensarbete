@@ -74,6 +74,11 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 		});
 	}
 
+	function Clear() {
+		store.set([]);
+		localStorage.setItem(localStorageKey, JSON.stringify([]))
+	}
+
 	function UppdateQuantity(itemId: number, quantity: number) {
 		store.update((currentItems) => {
 			if (!currentItems) {
@@ -96,6 +101,7 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 		Get,
 		Post,
 		Remove,
+		Clear,
 		UppdateQuantity
 	};
 };

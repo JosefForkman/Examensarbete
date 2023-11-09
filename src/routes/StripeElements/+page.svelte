@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import type { StripeElements } from '@stripe/stripe-js';
 	import { fail, redirect } from '@sveltejs/kit';
@@ -12,9 +12,8 @@
 	let errorMessage: string | undefined;
 	let elements: StripeElements;
 
-	const { Get, Remove } = cartStore();
+	const { Get, Clear } = cartStore();
 	const cartItems = Get();
-	// Remove(53)
 	onMount(async () => {
 		try {
 			const respond = await fetch('/api/Stripe', {
@@ -23,7 +22,8 @@
 					$cartItems?.map((val) => {
 						return {
 							productsId: val.stripe_price_id,
-							quantity: val.quantity
+							quantity: val.quantity,
+							id: val.id
 						};
 					})
 				)
@@ -112,6 +112,11 @@
 				return_url: new URL('/checkout/success', window.location.origin).toString()
 			}
 		});
+
+		
+		if (!error) {
+			Clear()
+		}
 
 		if (error.type === 'card_error' || error.type === 'validation_error') {
 			errorMessage = error.message;
