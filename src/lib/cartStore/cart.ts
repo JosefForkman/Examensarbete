@@ -75,7 +75,7 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 	}
 
 	function Clear() {
-		store.set([]);
+		store.set([]);		
 		localStorage.setItem(localStorageKey, JSON.stringify([]))
 	}
 

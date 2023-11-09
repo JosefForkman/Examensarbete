@@ -12,7 +12,7 @@
 	let errorMessage: string | undefined;
 	let elements: StripeElements;
 
-	const { Get, Clear } = cartStore();
+	const { Get } = cartStore();
 	const cartItems = Get();
 	onMount(async () => {
 		try {
@@ -90,8 +90,6 @@
 		} catch (err) {
 			console.log(err);
 		}
-
-		// const { client_secret }: { client_secret: string | null } = await req.json();
 	});
 
 	/* Handel submitt */
@@ -112,11 +110,6 @@
 				return_url: new URL('/checkout/success', window.location.origin).toString()
 			}
 		});
-
-		
-		if (!error) {
-			Clear()
-		}
 
 		if (error.type === 'card_error' || error.type === 'validation_error') {
 			errorMessage = error.message;
