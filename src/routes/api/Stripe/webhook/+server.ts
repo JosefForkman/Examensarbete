@@ -28,12 +28,15 @@ export const POST: RequestHandler = async ({ request }) => {
 		case 'payment_intent.succeeded':
 			console.log(`PaymentIntent for ${paymentIntent} was successful!`);
 			break;
+		case 'payment_intent.canceled':
+			console.log(`PaymentIntent for ${paymentIntent} was canceled!`);
+			break;
 		case 'payment_intent.created':
 			console.log(`PaymentIntent for ${paymentIntent} was created!`);
 			break;
-			case 'charge.succeeded':
+		case 'charge.succeeded':
 			console.log(`charge for ${paymentIntent} has succeeded!`);
-			break
+			break;
 		default:
 			console.log(`ohanterad stripe event ${event.type}`);
 			break;
