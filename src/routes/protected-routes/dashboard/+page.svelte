@@ -1,17 +1,11 @@
 <script lang="ts">
 	import { z } from 'zod';
 	import type { PageData } from './$types';
-	import { error } from '@sveltejs/kit';
-	import type { Order } from '@stripe/stripe-js';
 
 	export let data: PageData;
 
 	const orderSchema = z.object({
 		id: z.number(),
-		user_id: z.string(),
-		street: z.string(),
-		house_number: z.number(),
-		apartment_number: z.number().nullish(),
 		Order_items: z.array(
 			z.object({
 				id: z.number(),
@@ -30,7 +24,6 @@
 	});
 	const orderArraySchema = z.array(orderSchema).nullish();
 	let parsedOrders = orderArraySchema.parse(data.orders);
-	console.log(parsedOrders);
 	if (!parsedOrders) {
 		// throw error(500, 'Något gick fel');
 		parsedOrders = [];
@@ -39,7 +32,6 @@
 
 	let fullPrice: any = [];
 	if (parsedOrders.length >= 1) {
-		console.log('aaaaaa');
 		for (let i = 0; i < parsedOrders.length; i++) {
 			let orderPrice = 0;
 			parsedOrders[i].Order_items.forEach((orderItem) => {

@@ -6,10 +6,6 @@
 
 	const orderSchema = z.object({
 		id: z.number(),
-		user_id: z.string(),
-		street: z.string(),
-		house_number: z.number(),
-		apartment_number: z.number().nullish(),
 		order_date: z.string().nullish(),
 		delivery_date: z.string().nullish(),
 		Order_items: z.array(
@@ -28,6 +24,7 @@
 			})
 		)
 	});
+
 	const orderArraySchema = z.array(orderSchema);
 	let parsedOrders = orderArraySchema.parse(data.orders);
 

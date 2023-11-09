@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { z } from 'zod';
 	import type { PageData } from './$types';
 	import { superForm } from 'sveltekit-superforms/client';
 
@@ -11,25 +10,30 @@
 <main>
 	<form method="POST">
 		<div class="inputField">
-			<label for="first_name">Förstanamn</label>
-			<input type="text" name="first_name" bind:value={$form.first_name} />
+			<label for="name">Namn</label>
+			<input type="text" name="name" bind:value={$form.name} />
 		</div>
 		<div class="inputField">
-			<label for="first_name">Efternamn</label>
-			<input type="text" name="last_name" bind:value={$form.last_name} />
+			<label for="city">Stad</label>
+			<input type="text" name="city" bind:value={$form.city} />
 		</div>
 		<div class="inputField">
-			<label for="first_name">Gata</label>
-			<input type="text" name="street" bind:value={$form.street} />
+			<label for="line1">Gata</label>
+			<input type="line1" name="line1" bind:value={$form.line1} />
 		</div>
 		<div class="inputField">
-			<label for="first_name">Hus Nummer</label>
-			<input type="number" name="house_number" bind:value={$form.house_number} />
+			<label for="line2">Husnummer</label>
+			<input type="number" name="line2" bind:value={$form.line2} />
 		</div>
 		<div class="inputField">
-			<label for="first_name">Lägenhets Nummer</label>
-			<input type="number" name="apartment_number" bind:value={$form.apartment_number} />
+			<label for="postal_code">Postnummer</label>
+			<input type="number" name="postal_code" bind:value={$form.postal_code} />
 		</div>
+		<div class="inputField">
+			<label for="phone">Telefon nummer</label>
+			<input type="text" name="phone" bind:value={$form.phone} />
+		</div>
+
 		<p>
 			Alla fält kan lämnas tomma om du inte vill spara din information. <br /><br /> Ifall du vill ta
 			bort någon information töm då endast det fältet och Uppdatera så tar vi bort den.

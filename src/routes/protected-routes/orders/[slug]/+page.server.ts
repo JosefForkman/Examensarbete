@@ -5,7 +5,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 	const { data: orders } = await supabase
 		.from('Orders')
 		.select(
-			'id, street, house_number, apartment_number, user_id, order_date, delivery_date, Order_items (id, product_id, quantity, Products (*))'
+			'id, order_date, delivery_date, stripe_payment_intent_id,stripe_customer_id, Order_items (id, product_id, quantity, Products (*))'
 		).match({id: params.slug});
 
 	if (orders?.length !== 0) {
@@ -13,3 +13,30 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 	}
 	throw error(404, 'Order no found');
 };
+// import type { PageServerLoad } from './$types';
+
+// export const load: PageServerLoad = async ({ locals: { supabase } }) => {
+// 	const { data: profiles, error: profilesError } = await supabase.from('Profiles').select('*');
+
+// 	if (profilesError) {
+// 		console.log(profilesError);
+// 	}
+
+// 	if (!profiles) {
+// 		return;
+// 	}
+
+// 	const { data: orders, error: ordersError } = await supabase
+// 		.from('Orders')
+// 		.select(
+// 			'id, order_date, delivery_date, stripe_payment_intent_id,stripe_customer_id, Order_items (id, product_id, quantity, Products (*))'
+// 		)
+// 		.eq('stripe_customer_id', profiles[0].stripe_customer_id);
+// 	if (ordersError) {
+// 		console.log(ordersError);
+// 	}
+
+// 	if (orders?.length !== 0) {
+// 		return { orders };
+// 	}
+// };
