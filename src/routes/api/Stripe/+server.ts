@@ -67,7 +67,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, getSes
 		.from('Orders')
 		.insert({
 			stripe_customer_id: ProfileData.stripe_customer_id,
-			stripe_payment_intent_id: client_secret
+			stripe_payment_intent_id: client_secret,
 		})
 		.select('id')
 		.single();
