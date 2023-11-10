@@ -4,7 +4,7 @@ import { SECRET_STRIPE_webhook_KEY } from '$env/static/private';
 import { json } from '@sveltejs/kit';
 import type Stripe from 'stripe';
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, locals: { supabase } }) => {
 	let event: Stripe.Event | null = null;
 
 	const signature = request.headers.get('stripe-signature');

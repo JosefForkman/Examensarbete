@@ -14,10 +14,12 @@ const respond = z.array(
 	})
 );
 
-export const POST: RequestHandler = async ({ request, locals: { supabase, getSession } }) => {
+export const POST: RequestHandler = async ({ request, locals: { supabase, getSession }, isSubRequest }) => {
 	const body = respond.safeParse(await request.json());
 	const session = await getSession();
 
+	console.log({session, isSubRequest});
+	
 	/* Check for errors */
 	if (!session) {
 		return json({ message: 'Inte inloggad' }, { status: 401 });
@@ -39,7 +41,10 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, getSes
 		);
 	}
 
-	const { data: ProfileData } = await supabase.from('Profiles').select('stripe_customer_id').single();
+	const { data: ProfileData } = await supabase
+		.from('Profiles')
+		.select('stripe_customer_id')
+		.single();
 
 	if (!ProfileData) {
 		return json({ message: 'kunde inte hitta profile kund' }, { status: 500 });
@@ -67,7 +72,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, getSes
 		.from('Orders')
 		.insert({
 			stripe_customer_id: ProfileData.stripe_customer_id,
-			stripe_payment_intent_id: client_secret,
+			stripe_payment_intent_id: client_secret
 		})
 		.select('id')
 		.single();

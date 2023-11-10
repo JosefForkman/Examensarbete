@@ -16,24 +16,31 @@
 	const cartItems = Get();
 	onMount(async () => {
 		try {
-			const respond = await fetch('/api/Stripe', {
-				method: 'Post',
-				body: JSON.stringify(
-					$cartItems?.map((val) => {
-						return {
-							productsId: val.stripe_price_id,
-							quantity: val.quantity,
-							id: val.id
-						};
-					})
-				)
-			});
+			let client_secret = localStorage.getItem('client_secret');
+			if (!client_secret) {
+				const respond = await fetch('/api/Stripe', {
+					method: 'Post',
+					body: JSON.stringify(
+						$cartItems?.map((val) => {
+							return {
+								productsId: val.stripe_price_id,
+								quantity: val.quantity,
+								id: val.id
+							};
+						})
+					)
+				});
 
-			if (!respond.ok) {
-				// goto('/Product');
+				if (!respond.ok) {
+					goto('/Product');
+				}
+				const resData: { client_secret: string } = await respond.json();
+				client_secret = resData.client_secret;
+
+				localStorage.setItem('client_secret', client_secret);
 			}
 
-			const { client_secret }: { client_secret: string | null | undefined } = await respond.json();
+			// const { client_secret }: { client_secret: string | null | undefined } = await respond.json();
 
 			if (!stripeClient || !client_secret) {
 				return;
@@ -93,10 +100,9 @@
 	});
 
 	/* Handel submitt */
-	const handelSubmit = async (
-		e: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }
-	) => {
-		e.preventDefault();
+	const handelSubmit = async () => {
+		errorMessage = undefined;
+		localStorage.removeItem('client_secret');
 
 		if (!stripeClient || !elements) {
 			errorMessage = 'Stripe or element is not loaded';
@@ -122,7 +128,7 @@
 <main>
 	<h1>Stripe Elements</h1>
 
-	<form id="payment-form" on:submit={handelSubmit}>
+	<form id="payment-form" on:submit|preventDefault={handelSubmit}>
 		<div id="address-element" />
 		<div id="card-element" />
 		<div id="link-auth-element" />
