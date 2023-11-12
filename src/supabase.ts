@@ -50,6 +50,7 @@ export interface Database {
           delivery_date: string | null
           id: number
           order_date: string | null
+          status: boolean
           stripe_customer_id: string
           stripe_payment_intent_id: string
         }
@@ -57,6 +58,7 @@ export interface Database {
           delivery_date?: string | null
           id?: number
           order_date?: string | null
+          status?: boolean
           stripe_customer_id: string
           stripe_payment_intent_id: string
         }
@@ -64,6 +66,7 @@ export interface Database {
           delivery_date?: string | null
           id?: number
           order_date?: string | null
+          status?: boolean
           stripe_customer_id?: string
           stripe_payment_intent_id?: string
         }
