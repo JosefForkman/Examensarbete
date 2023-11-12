@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { superForm } from 'sveltekit-superforms/client';
-	import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
 
 	export let data: PageData;
 
@@ -9,7 +8,6 @@
 </script>
 
 <main>
-	<!-- <SuperDebug data={$form} /> -->
 
 	<form method="POST" use:enhance>
 		<div class={`inputField ${$form.name ? 'dirty': ''}`}>
