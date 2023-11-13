@@ -53,6 +53,7 @@ export interface Database {
           status: boolean
           stripe_customer_id: string
           stripe_payment_intent_id: string
+          user_id: string
         }
         Insert: {
           delivery_date?: string | null
@@ -61,6 +62,7 @@ export interface Database {
           status?: boolean
           stripe_customer_id: string
           stripe_payment_intent_id: string
+          user_id: string
         }
         Update: {
           delivery_date?: string | null
@@ -69,8 +71,17 @@ export interface Database {
           status?: boolean
           stripe_customer_id?: string
           stripe_payment_intent_id?: string
+          user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "Orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       Products: {
         Row: {
