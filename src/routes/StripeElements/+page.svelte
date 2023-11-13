@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import type { StripeElements } from '@stripe/stripe-js';
 	import { fail, redirect } from '@sveltejs/kit';
@@ -12,28 +12,35 @@
 	let errorMessage: string | undefined;
 	let elements: StripeElements;
 
-	const { Get, Remove } = cartStore();
+	const { Get } = cartStore();
 	const cartItems = Get();
-	// Remove(53)
 	onMount(async () => {
 		try {
-			const respond = await fetch('/api/Stripe', {
-				method: 'Post',
-				body: JSON.stringify(
-					$cartItems?.map((val) => {
-						return {
-							productsId: val.stripe_price_id,
-							quantity: val.quantity
-						};
-					})
-				)
-			});
+			let client_secret = localStorage.getItem('client_secret');
+			if (!client_secret) {
+				const respond = await fetch('/api/Stripe', {
+					method: 'Post',
+					body: JSON.stringify(
+						$cartItems?.map((val) => {
+							return {
+								productsId: val.stripe_price_id,
+								quantity: val.quantity,
+								id: val.id
+							};
+						})
+					)
+				});
 
-			if (!respond.ok) {
-				goto('/Product');
+				if (!respond.ok) {
+					goto('/Product');
+				}
+				const resData: { client_secret: string } = await respond.json();
+				client_secret = resData.client_secret;
+
+				localStorage.setItem('client_secret', client_secret);
 			}
 
-			const { client_secret }: { client_secret: string | null | undefined } = await respond.json();
+			// const { client_secret }: { client_secret: string | null | undefined } = await respond.json();
 
 			if (!stripeClient || !client_secret) {
 				return;
@@ -90,15 +97,12 @@
 		} catch (err) {
 			console.log(err);
 		}
-
-		// const { client_secret }: { client_secret: string | null } = await req.json();
 	});
 
 	/* Handel submitt */
-	const handelSubmit = async (
-		e: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }
-	) => {
-		e.preventDefault();
+	const handelSubmit = async () => {
+		errorMessage = undefined;
+		localStorage.removeItem('client_secret');
 
 		if (!stripeClient || !elements) {
 			errorMessage = 'Stripe or element is not loaded';
@@ -124,7 +128,7 @@
 <main>
 	<h1>Stripe Elements</h1>
 
-	<form id="payment-form" on:submit={handelSubmit}>
+	<form id="payment-form" on:submit|preventDefault={handelSubmit}>
 		<div id="address-element" />
 		<div id="card-element" />
 		<div id="link-auth-element" />

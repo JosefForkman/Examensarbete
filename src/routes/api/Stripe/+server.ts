@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 const respond = z.array(
 	z.object({
+		id: z.number().min(1),
 		productsId: z
 			.string()
 			.min(30, 'Produkt id för kort')
@@ -13,9 +14,15 @@ const respond = z.array(
 	})
 );
 
-export const POST: RequestHandler = async ({ request, locals: { supabase, getSession } }) => {
+export const POST: RequestHandler = async ({
+	request,
+	locals: { supabase, getSession },
+	isSubRequest
+}) => {
 	const body = respond.safeParse(await request.json());
 	const session = await getSession();
+
+	console.log({ session, isSubRequest });
 
 	/* Check for errors */
 	if (!session) {
@@ -38,32 +45,57 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, getSes
 		);
 	}
 
+	const { data: ProfileData } = await supabase
+		.from('Profiles')
+		.select('stripe_customer_id')
+		.single();
+
+	if (!ProfileData) {
+		return json({ message: 'kunde inte hitta profile kund' }, { status: 500 });
+	}
+
 	/* Make paymentIntents to frontend */
-	const {
-		client_secret,
-		shipping,
-		canceled_at,
-		transfer_data,
-		id: stripeId
-	} = await stripe.paymentIntents.create({
+	const { client_secret } = await stripe.paymentIntents.create({
 		amount: await calculateOrderAmount(body.data),
 		currency: 'sek',
 		// payment_method_types: ['card'],
 		automatic_payment_methods: { enabled: true },
+		customer: ProfileData.stripe_customer_id,
+		setup_future_usage: 'on_session',
 		metadata: {
 			integration_check: 'accept_a_payment'
 		}
 	});
 
-	const { error } = await supabase.from('Orders').insert({
-		apartment_number: shipping?.address?.line2 as number | null | undefined,
-		house_number: shipping?.address?.line1,
-		street: shipping?.address?.postal_code,
-		order_date: canceled_at,
-		delivery_date: transfer_data,
-		stripe_payment_intent_id: stripeId,
-		user_id: session.user.id
-	});
+	if (!client_secret) {
+		return json({ message: 'kunde inte hitta stripe kund' }, { status: 500 });
+	}
+
+	/* Add order to orders tabell */
+	const { error: OrdersError, data: orderData } = await supabase
+		.from('Orders')
+		.insert({
+			stripe_customer_id: ProfileData.stripe_customer_id,
+			stripe_payment_intent_id: client_secret,
+			user_id: session.user.id
+		})
+		.select('id')
+		.single();
+
+	if (!orderData) {
+		return json({ message: 'Kunde inte skapa order' }, { status: 500 });
+	}
+
+	/* Add order to order items tabell */
+	const { error } = await supabase.from('Order_items').insert(
+		body.data.map((val) => {
+			return {
+				product_id: val.id,
+				quantity: val.quantity,
+				order_id: orderData.id
+			};
+		})
+	);
 	if (error) {
 		return json({ message: 'kunde inte skapa data' }, { status: 500 });
 	}

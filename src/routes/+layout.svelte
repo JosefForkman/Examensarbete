@@ -3,8 +3,7 @@
 	
 	import type { LayoutData } from './$types';
 	import Fa from 'svelte-fa';
-	import { faCandyCane, faCartShopping, faHouse } from '@fortawesome/free-solid-svg-icons';
-	import { cartStore } from '$lib/cartStore/cart';
+	import { faCandyCane, faCartShopping, faHouse, faUserAlt } from '@fortawesome/free-solid-svg-icons';
 
 	export let data: LayoutData;
 
@@ -59,7 +58,9 @@
 			{#if session}
 				<li>
 					<a href="/protected-routes/dashboard">
-						<div class="svgContiner" />
+						<div class="svgContiner">
+							<Fa icon={faUserAlt} />
+						</div>
 						Mina sidor</a
 					>
 				</li>
@@ -95,7 +96,7 @@
 
 <style>
 	header {
-		--_height: 110px;
+		--_height: 170px;
 		/* display: flex;*/
 		display: grid;
 		align-items: center;
@@ -117,6 +118,7 @@
 	}
 	nav ul {
 		display: flex;
+		align-items: center;
 		gap: 2rem;
 	}
 
@@ -188,6 +190,7 @@
 		}
 
 		nav ul {
+			align-items: baseline;
 			flex-direction: column;
 		}
 

@@ -50,22 +50,28 @@ export interface Database {
           delivery_date: string | null
           id: number
           order_date: string | null
+          status: boolean
           stripe_customer_id: string
           stripe_payment_intent_id: string
+          user_id: string
         }
         Insert: {
           delivery_date?: string | null
           id?: number
           order_date?: string | null
+          status?: boolean
           stripe_customer_id: string
           stripe_payment_intent_id: string
+          user_id: string
         }
         Update: {
           delivery_date?: string | null
           id?: number
           order_date?: string | null
+          status?: boolean
           stripe_customer_id?: string
           stripe_payment_intent_id?: string
+          user_id?: string
         }
         Relationships: []
       }
