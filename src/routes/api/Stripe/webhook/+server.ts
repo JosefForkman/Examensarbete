@@ -102,7 +102,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }) =>
 				// 	// console.log(`PaymentIntent for ${paymentIntent} was created!`);
 				// 	break;
 				case 'charge.succeeded':
-					updateOrderTableStatus(false);
+					updateOrderTableStatus(true);
 					// console.log(`charge for ${paymentIntent} has succeeded!`);
 					// console.log({ charge: event.data.object });
 
