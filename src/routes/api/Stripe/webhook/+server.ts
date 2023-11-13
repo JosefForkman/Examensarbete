@@ -50,59 +50,49 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }) =>
 	if (SECRET_STRIPE_webhook_KEY && signature && body) {
 		try {
 			const event = stripe.webhooks.constructEvent(body, signature, SECRET_STRIPE_webhook_KEY);
-
-			function checkPaymentIntent(): z.TypeOf<typeof paymentIntentSchema> | Response {
-				const paymentIntent = paymentIntentSchema.safeParse(event.data.object);
-
-				if (!paymentIntent.success) {
-					console.log(paymentIntent.error.flatten());
-					return json({ message: 'paymentIntent matchar inte' }, { status: 400 });
-				}
-
-				return paymentIntent.data;
-			}
-
+			
 			async function updateOrderTableStatus(status: boolean) {
 				try {
 					const paymentIntent = paymentIntentSchema.safeParse(event.data.object);
-
+	
 					if (!paymentIntent.success) {
 						console.log(paymentIntent.error.flatten());
 						return json({ message: 'paymentIntent matchar inte' }, { status: 400 });
 					}
-
-					const { error } = await supabase
+	
+					const {error: orderError } = await supabase
 						.from('Orders')
-						.update({ status })
+						.update({ status: status })
 						.eq('stripe_payment_intent_id', paymentIntent.data.id);
-
-					if (error) {
-						return json({ message: 'kunde inte ta bort order' }, { status: 400 });
+	
+					console.log(paymentIntent.data.id);
+					if (orderError) {
+	
+						return json({ message: 'kunde inte ta bort order' }, { status: 404 });
 					}
-
+	
 					await stripe.paymentIntents.cancel(paymentIntent.data.id);
 				} catch (cancelError) {
-					return json({ message: 'kunde inte ta bort stripe order', cancelError }, { status: 400 });
+					return json({ message: 'kunde inte ta bort stripe order', cancelError }, { status: 500 });
 				}
-
+	
 				return new Response();
 			}
 
 			switch (event.type) {
 				case 'payment_intent.succeeded':
-					// console.log(`PaymentIntent for ${paymentIntent} was successful!`);
-					// console.log({ payment_intent: event.data.object });
 					updateOrderTableStatus(true);
+					// console.log(`PaymentIntent for ${paymentIntent} was successful!`);
+					console.log({ payment_intent: event.data.object });
 					break;
 				case 'payment_intent.canceled':
-					canceled();
+					updateOrderTableStatus(false);
 					// console.log(`PaymentIntent for ${paymentIntent} was canceled!`);
 					break;
 				// case 'payment_intent.created':
 				// 	// console.log(`PaymentIntent for ${paymentIntent} was created!`);
 				// 	break;
 				case 'charge.succeeded':
-					updateOrderTableStatus(true);
 					// console.log(`charge for ${paymentIntent} has succeeded!`);
 					// console.log({ charge: event.data.object });
 
