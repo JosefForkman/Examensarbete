@@ -59,28 +59,10 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }) =>
 					return json({ message: 'paymentIntent matchar inte' }, { status: 400 });
 				}
 
-				return paymentIntent.data
+				return paymentIntent.data;
 			}
-			const success = async () => {
-				const paymentIntent = checkPaymentIntent()
 
-				if (typeof paymentIntent === z.TypeOf<typeof paymentIntentSchema>) {
-
-				}
-
-				const { error } = await supabase
-					.from('Orders')
-					.update({ status: true })
-					.eq('stripe_payment_intent_id', paymentIntent);
-
-				if (error) {
-					return json({ message: 'kunde inte updatera status på order' }, { status: 400 });
-				}
-
-				return new Response();
-			};
-
-			const canceled = async () => {
+			async function updateOrderTableStatus(status: boolean) {
 				try {
 					const paymentIntent = paymentIntentSchema.safeParse(event.data.object);
 
@@ -88,9 +70,10 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }) =>
 						console.log(paymentIntent.error.flatten());
 						return json({ message: 'paymentIntent matchar inte' }, { status: 400 });
 					}
+
 					const { error } = await supabase
 						.from('Orders')
-						.delete()
+						.update({ status })
 						.eq('stripe_payment_intent_id', paymentIntent.data.id);
 
 					if (error) {
@@ -103,13 +86,13 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }) =>
 				}
 
 				return new Response();
-			};
+			}
 
 			switch (event.type) {
 				case 'payment_intent.succeeded':
 					// console.log(`PaymentIntent for ${paymentIntent} was successful!`);
-					console.log({ payment_intent: event.data.object });
-					success();
+					// console.log({ payment_intent: event.data.object });
+					updateOrderTableStatus(true);
 					break;
 				case 'payment_intent.canceled':
 					canceled();
@@ -119,8 +102,9 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }) =>
 				// 	// console.log(`PaymentIntent for ${paymentIntent} was created!`);
 				// 	break;
 				case 'charge.succeeded':
+					updateOrderTableStatus(false);
 					// console.log(`charge for ${paymentIntent} has succeeded!`);
-					console.log({ charge: event.data.object });
+					// console.log({ charge: event.data.object });
 
 					break;
 				default:
