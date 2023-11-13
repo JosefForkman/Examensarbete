@@ -1,5 +1,6 @@
 import { error, redirect, type RequestHandler } from '@sveltejs/kit';
 import { z } from 'zod';
+import { stripe } from '$lib/server/stripe.js';
 
 export const POST: RequestHandler = async ({ locals: { supabase, getSession } }) => {
 	const session = await getSession();
@@ -7,29 +8,31 @@ export const POST: RequestHandler = async ({ locals: { supabase, getSession } })
 	const userIdSchema = z.string();
 	const parsedUserId = userIdSchema.parse(userId);
 
+	const { data: profile, error: profileError } = await supabase
+		.from('Profiles')
+		.select('*')
+		.eq('id', parsedUserId);
+
+	if (profileError) {
+		throw error(500, 'fucked proflie');
+	}
+
+	console.log(profile);
+
 	const { data: orders, error: ordersError } = await supabase
 		.from('Orders')
 		.select('*')
-		.eq('user_id', parsedUserId);
+		.eq('stripe_customer_id', profile[0].stripe_customer_id);
 
 	if (ordersError) {
 		throw error(500, 'fucked orderIds');
 	}
-
-	orders.forEach(async (order) => {
-		const { error: orderError } = await supabase
-			.from('Order_items')
-			.delete()
-			.eq('order_id', order.id);
-		if (orderError) {
-			throw error(500, 'fucked order items delete');
-		}
-	});
+	console.log(orders);
 
 	const { error: ordersDeleteError } = await supabase
 		.from('Orders')
 		.delete()
-		.eq('user_id', parsedUserId);
+		.eq('stripe_customer_id', profile[0].stripe_customer_id);
 
 	if (ordersDeleteError) {
 		console.log(ordersDeleteError);
@@ -57,5 +60,8 @@ export const POST: RequestHandler = async ({ locals: { supabase, getSession } })
 		console.log(userDeleteError);
 		throw error(500, 'fucked user delete');
 	}
+
+	const deletedUser = await stripe.customers.del(profile[0].stripe_customer_id);
+
 	throw redirect(303, '/');
 };

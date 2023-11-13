@@ -73,15 +73,7 @@ export interface Database {
           stripe_payment_intent_id?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "Orders_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
+        Relationships: []
       }
       Products: {
         Row: {

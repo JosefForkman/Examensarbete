@@ -6,10 +6,6 @@
 
 	const orderSchema = z.object({
 		id: z.number(),
-		user_id: z.string(),
-		street: z.string(),
-		house_number: z.number(),
-		apartment_number: z.number().nullish(),
 		order_date: z.string().nullish(),
 		delivery_date: z.string().nullish(),
 		Order_items: z.array(
@@ -95,18 +91,18 @@
 					<div class="adressContainer">
 						<h3>Adress</h3>
 						<p>
-							{order.street}
+							<!-- {order.street}
 							{order.house_number}
 							{#if order.apartment_number}
 								{order.apartment_number}
-							{/if}
+							{/if} -->
 						</p>
 					</div>
 					<div class="totalPrice">
 						<h3>Total kostnad</h3>
 						<div class="priceItem">
 							<p>Delsumma</p>
-							<p>{fullPrice[orderIndex]} Kr</p>
+							<p>{fullPrice[orderIndex].toFixed(2)} Kr</p>
 						</div>
 						<div class="priceItem">
 							<p>Frakt</p>
@@ -114,7 +110,7 @@
 						</div>
 						<div class="priceItem">
 							<h3>ordersumma</h3>
-							<h3 class="totalCost">{fullPrice[0]} Kr</h3>
+							<h3 class="totalCost">{fullPrice[0].toFixed(2)} Kr</h3>
 						</div>
 					</div>
 				</div>
