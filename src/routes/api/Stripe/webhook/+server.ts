@@ -70,8 +70,11 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }) =>
 	
 						return json({ message: 'kunde inte ta bort order' }, { status: 404 });
 					}
+
+					if (!status) {
+						await stripe.paymentIntents.cancel(paymentIntent.data.id);
+					}
 	
-					await stripe.paymentIntents.cancel(paymentIntent.data.id);
 				} catch (cancelError) {
 					return json({ message: 'kunde inte ta bort stripe order', cancelError }, { status: 500 });
 				}
@@ -83,7 +86,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase } }) =>
 				case 'payment_intent.succeeded':
 					updateOrderTableStatus(true);
 					// console.log(`PaymentIntent for ${paymentIntent} was successful!`);
-					console.log({ payment_intent: event.data.object });
+					// console.log({ payment_intent: event.data.object });
 					break;
 				case 'payment_intent.canceled':
 					updateOrderTableStatus(false);

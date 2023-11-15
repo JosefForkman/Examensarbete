@@ -14,15 +14,9 @@ const respond = z.array(
 	})
 );
 
-export const POST: RequestHandler = async ({
-	request,
-	locals: { supabase, getSession },
-	isSubRequest
-}) => {
+export const POST: RequestHandler = async ({ request, locals: { supabase, getSession } }) => {
 	const body = respond.safeParse(await request.json());
 	const session = await getSession();
-
-	console.log({ session, isSubRequest });
 
 	/* Check for errors */
 	if (!session) {
