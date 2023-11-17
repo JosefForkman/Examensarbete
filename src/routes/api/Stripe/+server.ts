@@ -55,7 +55,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, getSes
 		// payment_method_types: ['card'],
 		automatic_payment_methods: { enabled: true },
 		customer: ProfileData.stripe_customer_id,
-		setup_future_usage: 'on_session',
+		setup_future_usage: 'off_session',
 		metadata: {
 			integration_check: 'accept_a_payment'
 		}
