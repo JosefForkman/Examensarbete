@@ -3,7 +3,7 @@
 	import type { PageData } from './$types';
 	import { cartStore } from '$lib/cartStore/cart';
 
-	const {Post} = cartStore()
+	const { Post } = cartStore();
 
 	export let data: PageData;
 
@@ -57,15 +57,19 @@
 		height: fit-content;
 	}
 	img {
+		grid-row: 1 / 3;
 		width: 100%;
-		height: 100vw;
+		/* height: 600px;  */
+		aspect-ratio: 16 / 9;
 		object-fit: cover;
 	}
 	.content {
-		max-width: 100%;
+		display: grid;
+		grid-template-columns: 1fr 2fr;
+		gap: 2rem;
+		justify-items: start;
+		/* max-width: 100%; */
 		padding-inline: 18px;
-		display: flex;
-		flex-direction: column;
 	}
 	button {
 		padding: 17px 60px;
@@ -82,5 +86,14 @@
 		justify-content: space-between;
 		align-items: center;
 		margin-bottom: 25px;
+	}
+
+	@media (width <= 1400px) { 
+		.content {
+			grid-template-columns: 1fr;
+		}
+		img {
+			grid-row: 1 / 1;
+		}
 	}
 </style>

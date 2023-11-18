@@ -14,15 +14,9 @@ const respond = z.array(
 	})
 );
 
-export const POST: RequestHandler = async ({
-	request,
-	locals: { supabase, getSession },
-	isSubRequest
-}) => {
+export const POST: RequestHandler = async ({ request, locals: { supabase, getSession } }) => {
 	const body = respond.safeParse(await request.json());
 	const session = await getSession();
-
-	console.log({ session, isSubRequest });
 
 	/* Check for errors */
 	if (!session) {
@@ -55,13 +49,13 @@ export const POST: RequestHandler = async ({
 	}
 
 	/* Make paymentIntents to frontend */
-	const { client_secret } = await stripe.paymentIntents.create({
+	const { client_secret, id } = await stripe.paymentIntents.create({
 		amount: await calculateOrderAmount(body.data),
 		currency: 'sek',
 		// payment_method_types: ['card'],
 		automatic_payment_methods: { enabled: true },
 		customer: ProfileData.stripe_customer_id,
-		setup_future_usage: 'on_session',
+		setup_future_usage: 'off_session',
 		metadata: {
 			integration_check: 'accept_a_payment'
 		}
@@ -76,7 +70,7 @@ export const POST: RequestHandler = async ({
 		.from('Orders')
 		.insert({
 			stripe_customer_id: ProfileData.stripe_customer_id,
-			stripe_payment_intent_id: client_secret,
+			stripe_payment_intent_id: id,
 			user_id: session.user.id
 		})
 		.select('id')
