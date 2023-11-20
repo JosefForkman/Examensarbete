@@ -16,11 +16,6 @@
 		<img {src} alt="" />
 	</section>
 
-	<!-- <a class="aboutSectionLink" href="#aboutSection">
-		<p class="sr-only">Gå till om oss</p>
-		<Fa icon={faChevronDown} scale="2x" color="var(--Accent)" />
-	</a> -->
-
 	<section class="about" id="aboutSection">
 		<h2>About us</h2>
 		<p>
@@ -56,10 +51,6 @@
 		grid-row: 1;
 		width: 100%;
 		border-radius: 0.5rem;
-	}
-
-	.aboutSectionLink {
-		text-align: center;
 	}
 
 	.about {

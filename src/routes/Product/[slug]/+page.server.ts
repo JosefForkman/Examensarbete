@@ -2,11 +2,15 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from '../$types';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
-	//@ts-ignore
-	const { data: Product } = await supabase.from('Products').select('*').eq('name', params.slug);
+	const { data: Product } = await supabase
+		.from('Products')
+		.select('*')
+		//@ts-ignore
+		.eq('name', params.slug)
+		.single();
 
-	if (Product?.length !== 0) {
-		return { Product };
+	if (!Product) {
+		throw error(404, 'Product not found');
 	}
-  throw error(404, 'Product not found')
+	return { Product };
 };

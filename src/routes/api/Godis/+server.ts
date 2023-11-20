@@ -1,16 +1,9 @@
-import { z } from 'zod';
 import type { RequestHandler } from './$types';
-import { error, json } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import { stripe } from '$lib/server/stripe';
+import { produkts } from '$lib/types/Schema';
 
-const shema = z.array(
-	z.object({
-		name: z.string(),
-		price: z.number(),
-		description: z.string().nullable(),
-		img_url: z.string().url().nullable()
-	})
-);
+
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, getSession } }) => {
 	const session = await getSession()
@@ -18,7 +11,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, getSes
 		throw error(401)
 	}
 	
-	const req = shema.safeParse(await request.json());
+	const req = produkts.safeParse(await request.json());
 
 	if (!req.success) {
 		throw error(400, "body matchar inte");

@@ -5,6 +5,7 @@
 	import { fail, redirect } from '@sveltejs/kit';
 	import { cartStore } from '$lib/cartStore/cart';
 	import { goto } from '$app/navigation';
+	import type { StripeOrderItemsType } from '$lib/types/Schema';
 
 	export let data: PageData;
 	const { stripeClient } = data;
@@ -17,18 +18,21 @@
 	onMount(async () => {
 		try {
 			let client_secret = localStorage.getItem('client_secret');
+
+			const body: StripeOrderItemsType =
+				$cartItems?.map((val) => {
+					return {
+						id: val.id,
+						quantity: val.quantity,
+						stripe_price_id: val.stripe_price_id,
+						products_id: val.price
+					};
+				}) ?? [];
+
 			if (!client_secret) {
 				const respond = await fetch('/api/Stripe', {
 					method: 'Post',
-					body: JSON.stringify(
-						$cartItems?.map((val) => {
-							return {
-								productsId: val.stripe_price_id,
-								quantity: val.quantity,
-								id: val.id
-							};
-						})
-					)
+					body: JSON.stringify(body)
 				});
 
 				if (!respond.ok) {

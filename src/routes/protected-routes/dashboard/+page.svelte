@@ -1,66 +1,58 @@
 <script lang="ts">
 	import { z } from 'zod';
 	import type { PageData } from './$types';
+	import { OrderItem, produkt } from '$lib/types/Schema';
+	import { error } from '@sveltejs/kit';
 
 	export let data: PageData;
 
 	const orderSchema = z.object({
 		id: z.number(),
 		Order_items: z.array(
-			z.object({
-				id: z.number(),
-				product_id: z.number(),
-				quantity: z.number(),
-				Products: z.object({
-					id: z.number(),
-					name: z.string(),
-					price: z.number(),
-					img_url: z.string().nullable(),
-					description: z.string().nullish(),
-					stripe_price_id: z.string()
-				})
+			OrderItem.extend({
+				Products: produkt
 			})
 		)
 	});
 	const orderArraySchema = z.array(orderSchema).nullish();
-	let parsedOrders = orderArraySchema.parse(data.orders);
-	if (!parsedOrders) {
-		// throw error(500, 'Något gick fel');
-		parsedOrders = [];
+	let parsedOrders = orderArraySchema.safeParse(data.orders);
+	if (!parsedOrders.success) {
+		throw error(500, 'Något gick fel');
 	}
-	let lastOrder: any;
+	if (!parsedOrders.data) {
+		throw error(404, 'Något gick fel');
+	}
+	let lastOrder: z.infer<typeof orderSchema>;
 
-	let fullPrice: any = [];
-	if (parsedOrders.length >= 1) {
-		for (let i = 0; i < parsedOrders.length; i++) {
+	let fullPrice: number[] = [];
+	if (parsedOrders.data.length >= 1) {
+		for (let i = 0; i < parsedOrders.data.length; i++) {
 			let orderPrice = 0;
-			parsedOrders[i].Order_items.forEach((orderItem) => {
+			parsedOrders.data[i].Order_items.forEach((orderItem) => {
 				orderPrice += orderItem.Products.price * orderItem.quantity;
 			});
 			fullPrice.push(orderPrice);
 		}
-		let lastIndex = parsedOrders.length - 1;
-		lastOrder = parsedOrders[lastIndex];
+		let lastIndex = parsedOrders.data.length - 1;
+		lastOrder = parsedOrders.data[lastIndex];
 	}
 </script>
 
 <main>
 	<ul>
-		{#if parsedOrders !== undefined && parsedOrders !== null}
-			{#if parsedOrders.length >= 1}
-				<li>
-					<div class="itemHead">
-						<h2>Senaste Beställning</h2>
+		{#if lastOrder}
+			<li>
+				<div class="itemHead">
+					<h2>Senaste Beställning</h2>
+				</div>
+				{#each lastOrder.Order_items as orderItem}
+					<div class="productContainer">
+						<img src={orderItem.Products.img_url} alt="" />
+						<p>{orderItem.Products.name}</p>
 					</div>
-					{#each lastOrder.Order_items as orderItem}
-						<div class="productContainer">
-							<img src={orderItem.Products.img_url} alt="" />
-							<p>{orderItem.Products.name}</p>
-						</div>
-					{/each}
-					<a class="details" href={'/protected-routes/orders/' + lastOrder.id}>Mer Info ></a>
-				</li>
-			{/if}
+				{/each}
+				<a class="details" href={'/protected-routes/orders/' + lastOrder.id}>Mer Info ></a>
+			</li>
 		{/if}
 		<li>
 			<a href="/protected-routes/orders" class="menuItem">
@@ -88,9 +80,7 @@
 		</li>
 		<li>
 			<form action="/signOut" method="post">
-				<button class="btn"
-					>Logga ut <p>></p></button
-				>
+				<button class="btn">Logga ut</button>
 			</form>
 		</li>
 	</ul>

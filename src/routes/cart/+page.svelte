@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { cartStore } from '$lib/cartStore/cart';
 
-	const { Get, Post, Remove, UppdateQuantity } = cartStore();
+	const { Get, Remove, UppdateQuantity } = cartStore();
 	let cart = Get();
 
 	let options: number[] = [];

@@ -1,7 +1,3 @@
-<script lang="ts">
-	// fill if needs
-</script>
-
 <main>
 	<div class="linkContainer">
 		<a class="btn" href='/login'>Login</a>
@@ -24,13 +20,5 @@
 		justify-content: center;
 		align-items: center;
 		gap: 18px;
-	}
-	.linkBtn {
-		padding: 17px 60px;
-		border-radius: 25px;
-		font-size: 20px;
-		cursor: pointer;
-		background-color: var(--Primary);
-		color: white;
 	}
 </style>
