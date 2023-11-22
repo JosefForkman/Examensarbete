@@ -1,23 +1,9 @@
-import { string, z } from 'zod';
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
+import type { cartType } from '$lib/types/Schema';
 
-export const itemZodSchema = z.strictObject({
-	id: z.number(),
-	name: z.string(),
-	price: z.number(),
-	img_url: z.string().nullable(),
-	description: z.string().nullish(),
-	stripe_price_id: string(),
-	quantity: z.number()
-});
-
-export const itemArraySchema = z.array(itemZodSchema);
-
-type itemType = z.infer<typeof itemZodSchema>;
-
-export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
-	const store = writable<itemType[] | null>(value);
+export const cartStore = (value: cartType[] = [], localStorageKey = 'cart') => {
+	const store = writable<cartType[] | null>(value);
 
 	/* Check if access to localStorage */
 	if (browser) {
@@ -28,7 +14,7 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 			localStorage.setItem(localStorageKey, JSON.stringify(value));
 		}
 
-		const cartLocalParse: itemType[] | null = JSON.parse(cartLocal!);
+		const cartLocalParse: cartType[] | null = JSON.parse(cartLocal!);
 		store.set(cartLocalParse);
 	}
 
@@ -36,7 +22,7 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 		return store;
 	}
 
-	function Post(newItem: itemType) {
+	function Post(newItem: cartType) {
 		store.update((currentItems) => {
 			/* if item already exist */
 			if (!currentItems) {
@@ -75,8 +61,8 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 	}
 
 	function Clear() {
-		store.set([]);		
-		localStorage.setItem(localStorageKey, JSON.stringify([]))
+		store.set([]);
+		localStorage.setItem(localStorageKey, JSON.stringify([]));
 	}
 
 	function UppdateQuantity(itemId: number, quantity: number) {
@@ -84,7 +70,6 @@ export const cartStore = (value: itemType[] = [], localStorageKey = 'cart') => {
 			if (!currentItems) {
 				return currentItems;
 			}
-			console.log('itemid:' + itemId, 'quant:' + quantity);
 
 			for (let i = 0; i < currentItems.length; i++) {
 				if (currentItems[i].id === itemId) {
