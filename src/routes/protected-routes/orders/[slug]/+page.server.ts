@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { stripe } from '$lib/server/stripe';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
 	const { data: orders } = await supabase
@@ -18,13 +19,17 @@ export const load: PageServerLoad = async ({ params, locals: { supabase } }) => 
 		return;
 	}
 
+	const stripe_payment_intent = await stripe.paymentIntents.retrieve(
+		orders[0].stripe_payment_intent_id
+	);
+	const address = stripe_payment_intent.shipping?.address;
+	console.log(address);
 	if (orders?.length !== 0) {
-
 		if (orders[0].stripe_customer_id != profiles.stripe_customer_id) {
-			throw error(403, 'forbiden')
+			throw error(403, 'forbiden');
 		}
 
-		return { orders };
+		return { orders, address };
 	}
 
 	throw error(404, 'Order no found');
