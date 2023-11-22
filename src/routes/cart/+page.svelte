@@ -54,16 +54,6 @@
 							</div>
 						</div>
 						<div class="buttonContainer">
-							<!-- might go back to this solotion for updating the quantity -->
-							<!-- <input
-								type="number"
-								name="quantity"
-								min="0"
-								max="100"
-								step="1"
-								bind:value={cartItem.quantity}
-								on:change={() => uppdateItem(cartItem.id, cartItem.quantity)}
-							/> -->
 							<select
 								name=""
 								id=""
@@ -80,7 +70,7 @@
 				{/each}
 			</ul>
 			{#if $cart.length > 0}
-				<a href="/StripeElements" class="btn">Gå till betalning</a>
+				<a href="/Checkout" class="btn">Gå till betalning</a>
 			{:else}
 				<a href="/Product" class="btn">Leta efter Godis</a>
 			{/if}
@@ -118,10 +108,6 @@
 		display: flex;
 		gap: 18px;
 		align-items: center;
-	}
-	input {
-		width: 46px;
-		height: 28px;
 	}
 	.textContainer {
 		display: flex;

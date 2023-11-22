@@ -26,6 +26,7 @@
 	});
 	const orderArraySchema = z.array(orderSchema);
 	let parsedOrders = orderArraySchema.parse(data.orders);
+	let address = data.address;
 
 	let fullPrice: any = [];
 
@@ -91,12 +92,10 @@
 					<div class="adressContainer">
 						<h3>Adress</h3>
 						<p>
-							<!-- {order.street}
-							{order.house_number}
-							{#if order.apartment_number}
-								{order.apartment_number}
-							{/if} -->
+							{address?.line1}
+							{address?.line2}
 						</p>
+						<p>{address?.city} {address?.postal_code}</p>
 					</div>
 					<div class="totalPrice">
 						<h3>Total kostnad</h3>

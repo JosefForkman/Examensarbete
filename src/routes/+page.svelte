@@ -1,7 +1,5 @@
 <script>
 	import src from '$lib/assets/pexels-photo-4016579 1.png';
-	import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
-	import Fa from 'svelte-fa';
 </script>
 
 <main>
@@ -57,6 +55,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
+		margin-bottom: 5rem;
 	}
 
 	@media (width >= 768px) {

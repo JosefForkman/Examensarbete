@@ -1,42 +1,36 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { stripe } from '$lib/server/stripe';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase } }) => {
 	const { data: orders } = await supabase
 		.from('Orders')
 		.select(
 			'id, order_date, delivery_date, stripe_payment_intent_id,stripe_customer_id, Order_items (id, product_id, quantity, Products (*))'
-		).match({id: params.slug});
+		)
+		.match({ id: params.slug });
 
-	if (orders?.length !== 0) {
-		return { orders };
+	const { data: profiles } = await supabase.from('Profiles').select('stripe_customer_id').single();
+
+	if (!profiles) {
+		return;
 	}
+	if (!orders) {
+		return;
+	}
+
+	const stripe_payment_intent = await stripe.paymentIntents.retrieve(
+		orders[0].stripe_payment_intent_id
+	);
+	const address = stripe_payment_intent.shipping?.address;
+	console.log(address);
+	if (orders?.length !== 0) {
+		if (orders[0].stripe_customer_id != profiles.stripe_customer_id) {
+			throw error(403, 'forbiden');
+		}
+
+		return { orders, address };
+	}
+
 	throw error(404, 'Order no found');
 };
-// import type { PageServerLoad } from './$types';
-
-// export const load: PageServerLoad = async ({ locals: { supabase } }) => {
-// 	const { data: profiles, error: profilesError } = await supabase.from('Profiles').select('*');
-
-// 	if (profilesError) {
-// 		console.log(profilesError);
-// 	}
-
-// 	if (!profiles) {
-// 		return;
-// 	}
-
-// 	const { data: orders, error: ordersError } = await supabase
-// 		.from('Orders')
-// 		.select(
-// 			'id, order_date, delivery_date, stripe_payment_intent_id,stripe_customer_id, Order_items (id, product_id, quantity, Products (*))'
-// 		)
-// 		.eq('stripe_customer_id', profiles[0].stripe_customer_id);
-// 	if (ordersError) {
-// 		console.log(ordersError);
-// 	}
-
-// 	if (orders?.length !== 0) {
-// 		return { orders };
-// 	}
-// };

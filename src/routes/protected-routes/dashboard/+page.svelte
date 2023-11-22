@@ -24,18 +24,10 @@
 	}
 	let lastOrder: z.infer<typeof orderSchema>;
 
-	let fullPrice: number[] = [];
-	if (parsedOrders.data.length >= 1) {
-		for (let i = 0; i < parsedOrders.data.length; i++) {
-			let orderPrice = 0;
-			parsedOrders.data[i].Order_items.forEach((orderItem) => {
-				orderPrice += orderItem.Products.price * orderItem.quantity;
-			});
-			fullPrice.push(orderPrice);
-		}
-		let lastIndex = parsedOrders.data.length - 1;
-		lastOrder = parsedOrders.data[lastIndex];
-	}
+	
+		let sortedOrders = parsedOrders.data.sort((a, b) => a.id - b.id);
+
+		lastOrder = sortedOrders[sortedOrders.length - 1];
 </script>
 
 <main>

@@ -17,16 +17,16 @@
 
 	const orderArraySchema = z.array(orderSchema);
 	let parsedOrders = orderArraySchema.parse(data.orders);
+	parsedOrders = parsedOrders.sort((a, b) => b.id - a.id);
 
 	let orderDates: string[] = [];
 
 	for (let i = 0; i < parsedOrders.length; i++) {
-		const date = new Date(parsedOrders[i].order_date as string)
-			.toLocaleString('default', {
-				day: '2-digit',
-				month: 'long',
-				year: 'numeric'
-			});
+		const date = new Date(parsedOrders[i].order_date as string).toLocaleString('default', {
+			day: '2-digit',
+			month: 'long',
+			year: 'numeric'
+		});
 		orderDates.push(date);
 	}
 </script>
