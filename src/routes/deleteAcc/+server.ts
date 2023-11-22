@@ -14,7 +14,7 @@ export const POST: RequestHandler = async ({ locals: { supabase, getSession } })
 		.eq('id', parsedUserId);
 
 	if (profileError) {
-		throw error(500, 'fucked proflie');
+		throw error(500, 'There was an error removing your account');
 	}
 
 	console.log(profile);
@@ -25,7 +25,7 @@ export const POST: RequestHandler = async ({ locals: { supabase, getSession } })
 		.eq('stripe_customer_id', profile[0].stripe_customer_id);
 
 	if (ordersError) {
-		throw error(500, 'fucked orderIds');
+		throw error(500, 'There was an error removing your account');
 	}
 	console.log(orders);
 
@@ -36,7 +36,7 @@ export const POST: RequestHandler = async ({ locals: { supabase, getSession } })
 
 	if (ordersDeleteError) {
 		console.log(ordersDeleteError);
-		throw error(500, 'fucked delete orders');
+		throw error(500, 'There was an error removing your account');
 	}
 
 	const { error: profileDeletError } = await supabase
@@ -44,13 +44,13 @@ export const POST: RequestHandler = async ({ locals: { supabase, getSession } })
 		.delete()
 		.eq('id', parsedUserId);
 	if (profileDeletError) {
-		throw error(500, 'fucked delete profile');
+		throw error(500, 'There was an error removing your account');
 	}
 
 	const { error: signOutError } = await supabase.auth.signOut();
 
 	if (signOutError) {
-		throw error(500, 'Något hände när du loggade ut');
+		throw error(500, 'There was an error removing your account');
 	}
 
 	const { data: userDeleteData, error: userDeleteError } = await supabase.auth.admin.deleteUser(
@@ -58,7 +58,7 @@ export const POST: RequestHandler = async ({ locals: { supabase, getSession } })
 	);
 	if (userDeleteError) {
 		console.log(userDeleteError);
-		throw error(500, 'fucked user delete');
+		throw error(500, 'There was an error removing your account');
 	}
 
 	const deletedUser = await stripe.customers.del(profile[0].stripe_customer_id);

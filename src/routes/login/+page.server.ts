@@ -17,7 +17,7 @@ export const load = async ({ locals: { getSession } }) => {
 
 	return { loginForm };
 };
-//@ts-ignore
+//-ignore
 async function create_profile_on_first_login({ locals: { getSession, supabase } }) {
 	const Session = await getSession();
 	let userId = Session.user();

@@ -1,7 +1,5 @@
 <script>
 	import src from '$lib/assets/pexels-photo-4016579 1.png';
-	import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
-	import Fa from 'svelte-fa';
 </script>
 
 <main>
@@ -15,11 +13,6 @@
 		<a class="btn" href="/Godis">Products</a>
 		<img {src} alt="" />
 	</section>
-
-	<!-- <a class="aboutSectionLink" href="#aboutSection">
-		<p class="sr-only">Gå till om oss</p>
-		<Fa icon={faChevronDown} scale="2x" color="var(--Accent)" />
-	</a> -->
 
 	<section class="about" id="aboutSection">
 		<h2>About us</h2>
@@ -58,14 +51,11 @@
 		border-radius: 0.5rem;
 	}
 
-	.aboutSectionLink {
-		text-align: center;
-	}
-
 	.about {
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
+		margin-bottom: 5rem;
 	}
 
 	@media (width >= 768px) {
