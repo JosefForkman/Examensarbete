@@ -1,16 +1,22 @@
 <script lang="ts">
 	import '$lib/style.css';
-	
+
 	import type { LayoutData } from './$types';
 	import Fa from 'svelte-fa';
-	import { faCandyCane, faCartShopping, faHouse, faUserAlt } from '@fortawesome/free-solid-svg-icons';
+	import {
+		faCandyCane,
+		faCartShopping,
+		faHouse,
+		faUserAlt
+	} from '@fortawesome/free-solid-svg-icons';
 
 	export let data: LayoutData;
 
 	const { session } = data;
 
-	let navIsOpen = false;
+	const toggleNav = () => (navIsOpen = !navIsOpen);
 
+	let navIsOpen = false;
 </script>
 
 <!-- The link is a shortcut to be able to skip the header  -->
@@ -19,12 +25,7 @@
 <header>
 	<a aria-label="Logga med text 'ChokladFrossa'" class="loga" href="/">ChokladFrossa</a>
 
-	<button
-		class="hamburger"
-		aria-controls="mainNav"
-		aria-expanded={navIsOpen}
-		on:click={() => (navIsOpen = !navIsOpen)}
-	>
+	<button class="hamburger" aria-controls="mainNav" aria-expanded={navIsOpen} on:click={toggleNav}>
 		<p class="sr-only">Meny</p>
 		<span aria-hidden="true" />
 		<span aria-hidden="true" />
@@ -33,54 +34,66 @@
 	<nav id="mainNav" class={navIsOpen ? 'active' : ''}>
 		<ul>
 			<li>
-				<a href="/">
-					<div class="svgContiner">
-						<Fa icon={faHouse} />
-					</div>
-					Hem
-				</a>
+				<button on:click={toggleNav} tabindex="-1" aria-hidden="true">
+					<a href="/">
+						<div class="svgContiner">
+							<Fa icon={faHouse} />
+						</div>
+						Hem
+					</a>
+				</button>
 			</li>
 			<li>
-				<a href="/Product"
-					><div class="svgContiner">
-						<Fa icon={faCandyCane} />
-					</div>
-					Godis
-				</a>
+				<button on:click={toggleNav} tabindex="-1" aria-hidden="true">
+					<a href="/Product"
+						><div class="svgContiner">
+							<Fa icon={faCandyCane} />
+						</div>
+						Godis
+					</a>
+				</button>
 			</li>
 			<li>
-				<a href="/OmOss">
-					<div class="svgContiner" />
-					Om oss
-				</a>
+				<button on:click={toggleNav} tabindex="-1" aria-hidden="true">
+					<a href="/OmOss">
+						<div class="svgContiner" />
+						Om oss
+					</a>
+				</button>
 			</li>
 
 			{#if session}
 				<li>
-					<a href="/protected-routes/dashboard">
-						<div class="svgContiner">
-							<Fa icon={faUserAlt} />
-						</div>
-						Mina sidor</a
-					>
+					<button on:click={toggleNav} tabindex="-1" aria-hidden="true">
+						<a href="/protected-routes/dashboard">
+							<div class="svgContiner">
+								<Fa icon={faUserAlt} />
+							</div>
+							Mina sidor</a
+						>
+					</button>
 				</li>
 				<li>
 					<form action="/signOut" method="post">
-						<button class="btn">Logga ut</button>
+						<button class="btn" on:click={toggleNav}>Logga ut</button>
 					</form>
 				</li>
 			{:else}
 				<li>
-					<a href="/login">
-						<div class="svgContiner" />
-						Logga in
-					</a>
+					<button on:click={toggleNav} tabindex="-1" aria-hidden="true">
+						<a href="/login">
+							<div class="svgContiner" />
+							Logga in
+						</a>
+					</button>
 				</li>
 				<li>
-					<a href="/signUp">
-						<div class="svgContiner" />
-						Registrera
-					</a>
+					<button on:click={toggleNav} tabindex="-1" aria-hidden="true">
+						<a href="/signUp">
+							<div class="svgContiner" />
+							Registrera
+						</a>
+					</button>
 				</li>
 			{/if}
 		</ul>
@@ -126,7 +139,12 @@
 		list-style: none;
 	}
 
-	nav ul li a:focus-visible {
+	nav ul li button:not(.btn) {
+		background-color: transparent;
+		border: transparent;
+	}
+
+	nav ul li a button:focus-visible {
 		outline: transparent;
 		border-bottom: 2px solid red;
 	}
