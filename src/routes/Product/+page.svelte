@@ -8,7 +8,7 @@
 	{#if data.Products}
 		{#each data.Products as produkt}
 			<a href={'/Product/' + produkt.name} class="Produkt">
-				<img src="https://placebeard.it/176/notag" alt="" />
+				<img src={produkt.img_url} alt="" />
 				<div class="content">
 					<p>{produkt.name}</p>
 					<span>{produkt.price}kr</span>
