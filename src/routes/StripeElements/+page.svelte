@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import type { StripeElements } from '@stripe/stripe-js';
 	import { cartStore } from '$lib/cartStore/cart';
 	import { goto } from '$app/navigation';
 	import type { StripeOrderItemsType } from '$lib/types/Schema';
+	import { browser } from '$app/environment';
 
 	export let data: PageData;
 	const { stripeClient } = data;
@@ -39,7 +40,6 @@
 				}
 				const resData: { client_secret: string } = await respond.json();
 				client_secret = resData.client_secret;
-
 				localStorage.setItem('client_secret', client_secret);
 			}
 
@@ -126,6 +126,12 @@
 			errorMessage = 'An unexpected error occurred.';
 		}
 	};
+
+	onDestroy(() => {
+		if (browser) {
+			localStorage.removeItem('client_secret');
+		}
+	});
 </script>
 
 <main>
