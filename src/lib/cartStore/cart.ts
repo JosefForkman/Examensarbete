@@ -49,7 +49,7 @@ export const cartStore = (value: cartType[] = [], localStorageKey = 'cart') => {
 	function Remove(cartId: number) {
 		store.update((item) => {
 			if (!item) {
-				return item;
+				return [];
 			}
 
 			const updatedValues = item.filter((value) => value.id !== cartId);
