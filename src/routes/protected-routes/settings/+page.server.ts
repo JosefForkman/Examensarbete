@@ -13,24 +13,24 @@ const formSchema = z.object({
 type formSchemaType = z.infer<typeof formSchema>;
 
 export const load = async ({ locals: { supabase } }) => {
-	const { data: profiles, error } = await supabase.from('Profiles').select('*').single();
+	const { data: profiles } = await supabase.from('Profiles').select('*').single();
 
 	if (!profiles) {
 		const form = await superValidate(formSchema);
-		throw fail(400, );
+		throw fail(400, { form });
 	}
-	const parsedCustomer = formSchema.safeParse(
+	const customer = formSchema.safeParse(
 		await stripe.customers.retrieve(profiles.stripe_customer_id)
 	);
 
-	if (!parsedCustomer.success) {
+	if (!customer.success) {
 		const form = await superValidate(formSchema);
 		throw fail(400, { form });
 	}
 
-	if (!parsedCustomer.data.address) {
-		const formdata: formSchemaType = {
-			...parsedCustomer.data,
+	if (!customer.data.address) {
+		const formData: formSchemaType = {
+			...customer.data,
 			address: {
 				city: undefined,
 				line1: undefined,
@@ -38,12 +38,12 @@ export const load = async ({ locals: { supabase } }) => {
 				postal_code: undefined
 			}
 		};
-		const form = await superValidate(formdata, formSchema);
+		const form = await superValidate(formData, formSchema);
 
 		return { form };
 	}
 
-	const form = await superValidate(parsedCustomer.data, formSchema);
+	const form = await superValidate(customer.data, formSchema);
 
 	return { form };
 };

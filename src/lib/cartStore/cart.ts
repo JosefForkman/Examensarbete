@@ -70,7 +70,6 @@ export const cartStore = (value: cartType[] = [], localStorageKey = 'cart') => {
 			if (!currentItems) {
 				return currentItems;
 			}
-			console.log('itemid:' + itemId, 'quant:' + quantity);
 
 			for (let i = 0; i < currentItems.length; i++) {
 				if (currentItems[i].id === itemId) {

@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import type { StripeElements } from '@stripe/stripe-js';
-	import { fail, redirect } from '@sveltejs/kit';
 	import { cartStore } from '$lib/cartStore/cart';
 	import { goto } from '$app/navigation';
 	import type { StripeOrderItemsType } from '$lib/types/Schema';
@@ -117,7 +116,7 @@
 			elements,
 			confirmParams: {
 				// Make sure to change this to your payment completion page
-				return_url: new URL('/checkout/success', window.location.origin).toString()
+				return_url: new URL('/StripeElements/success', window.location.origin).toString()
 			}
 		});
 
