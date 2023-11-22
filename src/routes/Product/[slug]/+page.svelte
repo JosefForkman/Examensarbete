@@ -1,34 +1,16 @@
 <script lang="ts">
-	import { z } from 'zod';
 	import type { PageData } from './$types';
 	import { cartStore } from '$lib/cartStore/cart';
+	import { produkt, type cartType } from '$lib/types/Schema';
 
 	const { Post } = cartStore();
 
 	export let data: PageData;
 
-	const itemSchema = z.strictObject({
-		id: z.number(),
-		name: z.string(),
-		price: z.number(),
-		img_url: z.string().nullable(),
-		description: z.string().nullish(),
-		stripe_price_id: z.string()
-	});
-	const itemArraySchema = z.array(itemSchema);
-	let parsedProduct = itemArraySchema.parse(data.Product);
-	let product = parsedProduct[0];
+	const product = produkt.parse(data.Product);
 
-	const extendedItemSchema = itemSchema.extend({ quantity: z.number() });
-	const extendedItemArraySchema = z.array(extendedItemSchema);
-
-	let newItem = {
-		id: product.id,
-		name: product.name,
-		price: product.price,
-		img_url: product.img_url,
-		description: product.description,
-		stripe_price_id: product.stripe_price_id,
+	const newItem: cartType = {
+		...product,
 		quantity: 1
 	};
 </script>
@@ -88,7 +70,7 @@
 		margin-bottom: 25px;
 	}
 
-	@media (width <= 1400px) { 
+	@media (width <= 1400px) {
 		.content {
 			grid-template-columns: 1fr;
 		}

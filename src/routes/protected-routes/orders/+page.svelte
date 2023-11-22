@@ -1,26 +1,16 @@
 <script lang="ts">
 	import { z } from 'zod';
 	import type { PageData } from './$types';
+	import { OrderItem, produkt } from '$lib/types/Schema';
 
 	export let data: PageData;
 
 	const orderSchema = z.object({
 		id: z.number(),
-		order_date: z.string().nullish(),
-		delivery_date: z.string().nullish(),
+		order_date: z.string().nullable(),
 		Order_items: z.array(
-			z.object({
-				id: z.number(),
-				product_id: z.number(),
-				quantity: z.number(),
-				Products: z.object({
-					id: z.number(),
-					name: z.string(),
-					price: z.number(),
-					img_url: z.string().nullable(),
-					description: z.string().nullish(),
-					stripe_price_id: z.string()
-				})
+			OrderItem.extend({
+				Products: produkt
 			})
 		)
 	});
@@ -28,31 +18,16 @@
 	const orderArraySchema = z.array(orderSchema);
 	let parsedOrders = orderArraySchema.parse(data.orders);
 
-	let orderDates: any = [];
-	const monthNames = [
-		'January',
-		'February',
-		'March',
-		'April',
-		'May',
-		'June',
-		'July',
-		'August',
-		'September',
-		'October',
-		'November',
-		'December'
-	];
+	let orderDates: string[] = [];
 
 	for (let i = 0; i < parsedOrders.length; i++) {
-		const date = new Date(parsedOrders[i].order_date as string);
-
-		const day = date.getUTCDate();
-		const month = monthNames[date.getMonth()];
-		const year = date.getFullYear();
-
-		const formatedDate = `${day} ${month} ${year}`;
-		orderDates.push(formatedDate);
+		const date = new Date(parsedOrders[i].order_date as string)
+			.toLocaleString('default', {
+				day: '2-digit',
+				month: 'long',
+				year: 'numeric'
+			});
+		orderDates.push(date);
 	}
 </script>
 

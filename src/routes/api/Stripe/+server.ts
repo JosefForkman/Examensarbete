@@ -1,21 +1,10 @@
 import { stripe } from '$lib/server/stripe';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { z } from 'zod';
-
-const respond = z.array(
-	z.object({
-		id: z.number().min(1),
-		productsId: z
-			.string()
-			.min(30, 'Produkt id för kort')
-			.regex(new RegExp('price_[A-Za-z0-9]{8,30}$'), 'Formateringen av produkt id är fel'),
-		quantity: z.number().min(1)
-	})
-);
+import { StripeOrdersItem, type StripeOrderItemsType } from '$lib/types/Schema';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, getSession } }) => {
-	const body = respond.safeParse(await request.json());
+	const body = StripeOrdersItem.safeParse(await request.json());
 	const session = await getSession();
 
 	/* Check for errors */
@@ -97,13 +86,13 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, getSes
 	return json({ client_secret }, { status: 201 });
 };
 
-async function calculateOrderAmount(body: z.infer<typeof respond>) {
+async function calculateOrderAmount(body: StripeOrderItemsType) {
 	const { data: stripeProducts } = await stripe.prices.list();
 
 	/* Get total cost */
 	return body.reduce((previousValue, currentValue) => {
 		const stripeProduct = stripeProducts.find(
-			(stripeProduct) => stripeProduct.id === currentValue.productsId
+			(stripeProduct) => stripeProduct.id === currentValue.stripe_price_id
 		);
 
 		/* Check for errors */
