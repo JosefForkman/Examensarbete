@@ -38,29 +38,15 @@
 		fullPrice.push(orderPrice);
 	}
 
-	let orderDates: any = [];
-	const monthNames = [
-		'January',
-		'February',
-		'March',
-		'April',
-		'May',
-		'June',
-		'July',
-		'August',
-		'September',
-		'October',
-		'November',
-		'December'
-	];
+	let orderDates: string[] = [];
 
 	for (let i = 0; i < parsedOrders.length; i++) {
-		const date = new Date(parsedOrders[i].order_date as string);
-		const day = date.getUTCDate();
-		const month = monthNames[date.getMonth()];
-		const year = date.getFullYear();
-		const formatedDate = `${day} ${month} ${year}`;
-		orderDates.push(formatedDate);
+		const date = new Date(parsedOrders[i].order_date as string).toLocaleString('default', {
+			day: '2-digit',
+			month: 'long',
+			year: 'numeric'
+		});
+		orderDates.push(date);
 	}
 </script>
 
