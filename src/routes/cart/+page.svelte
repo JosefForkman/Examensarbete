@@ -70,7 +70,7 @@
 				{/each}
 			</ul>
 			{#if $cart.length > 0}
-				<a href="/Checkout" class="btn">Gå till betalning</a>
+				<a href="/checkout" class="btn">Gå till betalning</a>
 			{:else}
 				<a href="/Product" class="btn">Leta efter Godis</a>
 			{/if}
